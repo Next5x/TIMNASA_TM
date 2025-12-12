@@ -2,7 +2,7 @@ const {zokou} =require("../framework/zokou");
 const axios =require("axios");
 
 
-zokou({ nomCom: "lyrics",
+zokou({ nomCom: "lyrics2",
         reaction: "✨",
         categorie: "Search" }, async (dest, zk, commandeOptions) => {
     
