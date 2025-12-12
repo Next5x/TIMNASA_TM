@@ -55,9 +55,7 @@ zokou({ nomCom: "dev", categorie: "General", reaction: "👊" }, async (dest, zk
     const { ms, mybotpic } = commandeOptions;
 
     const devs = [
-      { nom: "TECH", numero: "" },
       { nom: "᚛TIMNASA᚜", numero: "255784766591" },
-      { nom: "DIL NAKO", numero: "2557*********" },
       // Ajoute d'autres développeurs ici avec leur nom et numéro
     ];
 
@@ -95,7 +93,7 @@ else {
 zokou({ nomCom: "support", categorie: "General" }, async (dest, zk, commandeOptions) => {
   const { ms, repondre, auteurMessage, } = commandeOptions; 
  
-  repondre("THANK YOU FOR CHOOSING 𝐃𝚰𝐋 𝐊𝚫𝚴𝚯 𝚻𝚳𝐃, HERE ARE OUR SUPPORTIVE LINKS\n\n ☉ CHANNEL LINK IS HERE ☉ \n\n❒⁠⁠⁠⁠[https://whatsapp.com/channel/0029VajweHxKQuJP6qnjLM31] \n\n ☉ GROUP LINK IS HERE ☉\n\n❒⁠⁠⁠⁠[https://whatsapp.com/channel/0029VasiOoR3bbUw5aV4qB31] \n\n ☉MADE IN TANZANIA☉\n\n❒ DIL KANO\n\n\n*Created By 𝐃𝚰𝐋 𝐊𝚫𝚴𝚯 𝚻𝚳𝐃 and TIMNASA") 
+  repondre("THANK YOU FOR CHOOSING TIMNASA_TMD2, HERE ARE OUR SUPPORTIVE LINKS\n\n ☉ CHANNEL LINK IS HERE ☉ \n\n❒⁠⁠⁠⁠[https://whatsapp.com/channel/0029Vb9kKuVCMY0F5rmX2j1u] \n\n ☉ GROUP LINK IS HERE ☉\n\n❒⁠⁠⁠⁠[https://chat.whatsapp.com/JazGLNBxW5XDVEst3PN4kj?mode=hqrc] \n\n ☉MADE IN TANZANIA☉\n\n❒ 𝚻𝚰𝚳𝚴𝚫𝐒𝚫 𝚻𝚳𝐃2\n\n\n*Created By ᴛɪᴍɴᴀsᴀ ᴛᴍᴅ2* ") 
   await zk.sendMessage(auteurMessage,{text : `THANK YOU FOR CHOOSING TIMNASA,MAKE SURE YOU FOLLOW THESE LINKS. `},{quoted :ms})
 
 })

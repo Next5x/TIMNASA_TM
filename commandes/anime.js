@@ -81,7 +81,7 @@ zokou({
     const imdbData = response.data;
 
     let imdbInfo = "⚍⚎⚎⚎⚎⚎⚎⚎⚎⚎⚎⚎⚎⚎⚎⚍\n";
-    imdbInfo += " ``` 𝕀𝕄𝔻𝔹 𝕊𝔼𝔸ℝℂℍ```\n";
+    imdbInfo += " ``` *TIMNASA_TMD2 SEARCH*```\n";
     imdbInfo += "⚎⚎⚎⚎⚎⚎⚎⚎⚎⚎⚎⚎⚎⚎⚎⚎\n";
     imdbInfo += "🎬Title    : " + imdbData.Title + "\n";
     imdbInfo += "📅year      : " + imdbData.Year + "\n";
@@ -130,8 +130,8 @@ zokou({
     const response = await axios.get(`http://www.omdbapi.com/?apikey=742b2d09&t=${arg}&plot=full`);
     const imdbData = response.data;
 
-    let imdbInfo = "Tap on the link to join movie channel on telegram and download movies there : https://t.me/ibrahimtechai\n";
-    imdbInfo += " ``` JUMA MD FILMS```\n";
+    let imdbInfo = "Tap on the link to join movie channel on telegram and download movies there : https://telegram/TimnasaTech\n";
+    imdbInfo += " ``` *TIMNASA_TMD2 MOAVIES* ```\n";
     imdbInfo += "*Made by like-father-like-son*\n";
     imdbInfo += "🎬Title    : " + imdbData.Title + "\n";
     imdbInfo += "📅year      : " + imdbData.Year + "\n";
@@ -149,7 +149,8 @@ zokou({
     imdbInfo += "📦BoxOffice : " + imdbData.BoxOffice + "\n";
     imdbInfo += "🏙️Production : " + imdbData.Production + "\n";
     imdbInfo += "🌟score : " + imdbData.imdbRating + "\n";
-    imdbInfo += "❎imdbVotes : " + imdbData.imdbVotes + "";
+    imdbInfo += "❎imdbVotes : " + imdbData.imdbVotes + "\";
+    imdbInfo += "🗣videos : "+ imdbData.videos + "\n";
 
     zk.sendMessage(dest, {
       image: {
