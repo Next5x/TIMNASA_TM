@@ -468,7 +468,7 @@ function mybotpic() {
                                     };
                                     var txt = "lien detected, \n";
                                    // txt += `message supprimé \n @${auteurMessage.split("@")[0]} rétiré du groupe.`;
-                                    const gifLink = "https://raw.githubusercontent.com/djalega8000/Zokou-MD/main/media/remover.gif";
+                                    const gifLink = "https://raw.githubusercontent.com/timnasax/TIMNASA_TMD2/main/media/remover.gif";
                                     var sticker = new Sticker(gifLink, {
                                         pack: 'Zoou-Md',
                                         author: conf.OWNER_NAME,
@@ -566,7 +566,7 @@ function mybotpic() {
             };
             var txt = "bot detected, \n";
            // txt += `message supprimé \n @${auteurMessage.split("@")[0]} rétiré du groupe.`;
-            const gifLink = "https://raw.githubusercontent.com/djalega8000/Zokou-MD/main/media/remover.gif";
+            const gifLink = "https://raw.githubusercontent.com/timnasax/TIMNASA_TMD2/main/media/remover.gif";
             var sticker = new Sticker(gifLink, {
                 pack: 'Kibore md',
                 author: conf.OWNER_NAME,
