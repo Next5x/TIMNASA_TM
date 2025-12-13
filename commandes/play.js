@@ -1,12 +1,30 @@
 const { zokou } = require("../framework/zokou");
-const yts = require('yt-search');
-const ytdl = require('ytdl-core');
-const fs = require('fs');
-const yt=require("../framework/dl/ytdl-core.js")
-const ffmpeg = require("fluent-ffmpeg");
-const yts1 = require("youtube-yts");
-//var fs =require("fs-extra")
+const axios = require('axios');
+const ytSearch = require('yt-search');
+const conf = require(__dirname + '/../set');
+const { Catbox } = require("node-catbox");
+const fs = require('fs-extra');
+const { downloadAndSaveMediaMessage } = require('@whiskeysockets/baileys');
 
+// Initialize Catbox
+const catbox = new Catbox();
+
+// Function to upload a file to Catbox and return the URL
+async function uploadToCatbox(filePath) {
+  if (!fs.existsSync(filePath)) {
+    throw new Error("File does not exist");
+  }
+  try {
+    const uploadResult = await catbox.uploadFile({ path: filePath });
+    if (uploadResult) {
+      return uploadResult;
+    } else {
+      throw new Error("Error retrieving file link");
+    }
+  } catch (error) {
+    throw new Error(String(error));
+  }
+}
 zokou({
   nomCom: "play",
   categorie: "Search",
