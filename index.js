@@ -1,9 +1,8 @@
-
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
   var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+    if (!desc || ("get" in desc ? !__esModule : desc.writable || desc.configurable)) {
       desc = { enumerable: true, get: function() { return m[k]; } };
     }
     Object.defineProperty(o, k2, desc);
@@ -54,6 +53,9 @@ const prefixe = conf.PREFIXE;
 const more = String.fromCharCode(8206)
 const readmore = more.repeat(4001)
 
+// ONGEZA HII: Kazi ya kutumia Buffer kwa Base64 Decoding (atob)
+const atob = (b64) => Buffer.from(b64, 'base64').toString('binary'); 
+
 
 async function authentification() {
     try {
@@ -61,11 +63,13 @@ async function authentification() {
         //console.log("le data "+data)
         if (!fs.existsSync(__dirname + "/auth/creds.json")) {
             console.log("connexion en cour ...");
-            await fs.writeFileSync(__dirname + "/auth/creds.json", atob(session), "utf8");
+            // REKEBISHA HAPA KUTUMIA Buffer BADALA YA atob
+            await fs.writeFileSync(__dirname + "/auth/creds.json", Buffer.from(session, 'base64').toString('utf8'), "utf8");
             //console.log(session)
         }
         else if (fs.existsSync(__dirname + "/auth/creds.json") && session != "zokk") {
-            await fs.writeFileSync(__dirname + "/auth/creds.json", atob(session), "utf8");
+             // REKEBISHA HAPA KUTUMIA Buffer BADALA YA atob
+            await fs.writeFileSync(__dirname + "/auth/creds.json", Buffer.from(session, 'base64').toString('utf8'), "utf8");
         }
     }
     catch (e) {
@@ -112,6 +116,19 @@ setTimeout(() => {
         };
         const zk = (0, baileys_1.default)(sockOptions);
         store.bind(zk.ev);
+
+        // ONGEZA decodeJid HAPA ILI IPATIKANE KATIKA SCOPE ZINGINE
+        const decodeJid = (jid) => {
+            if (!jid)
+                return jid;
+            if (/:\d+@/gi.test(jid)) {
+                let decode = (0, baileys_1.jidDecode)(jid) || {};
+                return decode.user && decode.server && decode.user + '@' + decode.server || jid;
+            }
+            else
+                return jid;
+        };
+        
         // Replace the status reaction code with this:
 
 if (conf.AUTOREACT_STATUS=== "yes") {
@@ -156,6 +173,8 @@ if (conf.AUTOREACT_STATUS=== "yes") {
             const ms = messages[0];
             if (!ms.message)
                 return;
+            // ONDOA decodeJid HAPA - IKO TAYARI HAPO JUU
+            /*
             const decodeJid = (jid) => {
                 if (!jid)
                     return jid;
@@ -166,6 +185,7 @@ if (conf.AUTOREACT_STATUS=== "yes") {
                 else
                     return jid;
             };
+            */
             var mtype = (0, baileys_1.getContentType)(ms.message);
             var texte = mtype == "conversation" ? ms.message.conversation : mtype == "imageMessage" ? ms.message.imageMessage?.caption : mtype == "videoMessage" ? ms.message.videoMessage?.caption : mtype == "extendedTextMessage" ? ms.message?.extendedTextMessage?.text : mtype == "buttonsResponseMessage" ?
                 ms?.message?.buttonsResponseMessage?.selectedButtonId : mtype == "listResponseMessage" ?
@@ -177,7 +197,7 @@ if (conf.AUTOREACT_STATUS=== "yes") {
             /* const dj='255763111390';
              const dj2='254751284190';
              const luffy='254762016957'*/
-            /*  var superUser=[servBot,dj,dj2,luffy].map((s)=>s.replace(/[^0-9]/g)+"@s.whatsapp.net").includes(auteurMessage);
+            /* var superUser=[servBot,dj,dj2,luffy].map((s)=>s.replace(/[^0-9]/g)+"@s.whatsapp.net").includes(auteurMessage);
               var dev =[dj,dj2,luffy].map((t)=>t.replace(/[^0-9]/g)+"@s.whatsapp.net").includes(auteurMessage);*/
             const verifGroupe = origineMessage?.endsWith("@g.us");
             var infosGroupe = verifGroupe ? await zk.groupMetadata(origineMessage) : "";
@@ -216,10 +236,11 @@ if (conf.AUTOREACT_STATUS=== "yes") {
             console.log("type de message : " + mtype);
             console.log("------ contenu du message ------");
             console.log(texte);
-            /**  */
+            /** */
             function groupeAdmin(membreGroupe) {
                 let admin = [];
-                for (m of membreGroupe) {
+                // REKEBISHA HAPA: Tumia 'const m of' badala ya 'm of'
+                for (const m of membreGroupe) { 
                     if (m.admin == null)
                         continue;
                     admin.push(m.id);
@@ -259,7 +280,7 @@ if (conf.AUTOREACT_STATUS=== "yes") {
             
             // Utiliser une boucle for...of pour parcourir les liens
 function mybotpic() {
-    // Générer un indice aléatoire entre 0 (inclus) et la longueur du tableau (exclus)
+     // Ondoa mstari huu wa maoni
      // Générer un indice aléatoire entre 0 (inclus) et la longueur du tableau (exclus)
      const indiceAleatoire = Math.floor(Math.random() * lien.length);
      // Récupérer le lien correspondant à l'indice aléatoire
@@ -470,7 +491,7 @@ function mybotpic() {
                                    // txt += `message supprimé \n @${auteurMessage.split("@")[0]} rétiré du groupe.`;
                                     const gifLink = "https://raw.githubusercontent.com/timnasax/TIMNASA_TMD2/main/media/remover.gif";
                                     var sticker = new Sticker(gifLink, {
-                                        pack: 'TIMNASA_TMD,
+                                        pack: 'zokou', // <<< REKEBISHWA HAPA (Koma iliyokosekana)
                                         author: conf.OWNER_NAME,
                                         type: StickerTypes.FULL,
                                         categories: ['🤩', '🎉'],
@@ -496,14 +517,21 @@ function mybotpic() {
                                         console.log("antiien ") + e;
                                     }
                                     await zk.sendMessage(origineMessage, { delete: key });
-                                    await fs.unlink("st1.webp"); } 
+                                    // REKEBISHA: Angalia kuwepo kwa faili kabla ya kuifuta
+                                    if (fs.existsSync("st1.webp")) {
+                                        await fs.unlink("st1.webp");
+                                    }
+                                    } 
                                         
                                        else if (action === 'delete') {
                                         txt += `message deleted \n @${auteurMessage.split("@")[0]} avoid sending link.`;
                                         // await zk.sendMessage(origineMessage, { sticker: fs.readFileSync("st1.webp") }, { quoted: ms });
                                        await zk.sendMessage(origineMessage, { text: txt, mentions: [auteurMessage] }, { quoted: ms });
                                        await zk.sendMessage(origineMessage, { delete: key });
-                                       await fs.unlink("st1.webp");
+                                        // REKEBISHA: Angalia kuwepo kwa faili kabla ya kuifuta
+                                       if (fs.existsSync("st1.webp")) {
+                                           await fs.unlink("st1.webp");
+                                       }
 
                                     } else if(action === 'warn') {
                                         const {getWarnCountByJID ,ajouterUtilisateurAvecWarnCount} = require('./bdd/warn') ;
@@ -594,14 +622,21 @@ function mybotpic() {
                 console.log("antibot ") + e;
             }
             await zk.sendMessage(origineMessage, { delete: key });
-            await fs.unlink("st1.webp"); } 
+             // REKEBISHA: Angalia kuwepo kwa faili kabla ya kuifuta
+            if (fs.existsSync("st1.webp")) {
+                await fs.unlink("st1.webp");
+            }
+            } 
                 
                else if (action === 'delete') {
                 txt += `message delete \n @${auteurMessage.split("@")[0]} Avoid sending link.`;
                 //await zk.sendMessage(origineMessage, { sticker: fs.readFileSync("st1.webp") }, { quoted: ms });
                await zk.sendMessage(origineMessage, { text: txt, mentions: [auteurMessage] }, { quoted: ms });
                await zk.sendMessage(origineMessage, { delete: key });
-               await fs.unlink("st1.webp");
+                // REKEBISHA: Angalia kuwepo kwa faili kabla ya kuifuta
+               if (fs.existsSync("st1.webp")) {
+                   await fs.unlink("st1.webp");
+               }
 
             } else if(action === 'warn') {
                 const {getWarnCountByJID ,ajouterUtilisateurAvecWarnCount} = require('./bdd/warn') ;
@@ -664,7 +699,7 @@ function mybotpic() {
                         if (req) { return }
             }
 
-              /***************************  ONLY-ADMIN  */
+              /*************************** ONLY-ADMIN  */
 
             if(!verifAdmin && verifGroupe) {
                  let req = await isGroupOnlyAdmin(origineMessage);
@@ -862,7 +897,7 @@ zk.ev.on('group-participants.update', async (group) => {
                     if (path.extname(fichier).toLowerCase() == (".js")) {
                         try {
                             require(__dirname + "/commandes/" + fichier);
-                            console.log(fichier + " Installed Successfully✔️");
+                            console.log(fichier + " Installed Successfully💯");
                         }
                         catch (e) {
                             console.log(`${fichier} could not be installed due to : ${e}`);
@@ -888,7 +923,7 @@ zk.ev.on('group-participants.update', async (group) => {
                 
                 if((conf.DP).toLowerCase() === 'yes') {     
 
-                let cmsg =`      *TIMNASA TMD2*
+                let cmsg =`      TIMNASA TMD2
 ╭─────────────━┈⊷ 
 │🌏 TIMNASA TMD2 NOW IS *ACTIVE*
 │💫 ᴘʀᴇғɪx: *[ ${prefixe} ]*
@@ -970,8 +1005,7 @@ zk.ev.on('group-participants.update', async (group) => {
                 let interval = undefined
         
                 /**
-                 * 
-                 * @param {{messages: Baileys.proto.IWebMessageInfo[], type: Baileys.MessageUpsertType}} data 
+                 * * @param {{messages: Baileys.proto.IWebMessageInfo[], type: Baileys.MessageUpsertType}} data 
                  */
                 let listener = (data) => {
                     let { type, messages } = data;
