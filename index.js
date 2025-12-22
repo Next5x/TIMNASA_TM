@@ -481,7 +481,7 @@ function mybotpic() {
                                     };
                                     var txt = "lien detected, \n";
                                    // txt += `message supprimé \n @${auteurMessage.split("@")[0]} rétiré du groupe.`;
-                                    const gifLink = "https://raw.githubusercontent.com/timnasax/TIMNASA_TMD2/main/media/remover.gif";
+                                    const gifLink = "https://raw.githubusercontent.com/timnasax/TIMNASA_TMD2/main/media/warn.gif";
                                     var sticker = new Sticker(gifLink, {
                                         pack: 'zokou', // <<< REKEBISHWA HAPA (Koma iliyokosekana)
                                         author: conf.OWNER_NAME,
@@ -593,9 +593,9 @@ function mybotpic() {
             };
             var txt = "bot detected, \n";
            // txt += `message supprimé \n @${auteurMessage.split("@")[0]} rétiré du groupe.`;
-            const gifLink = "https://raw.githubusercontent.com/timnasax/TIMNASA_TMD2/main/media/remover.gif";
+            const gifLink = "https://raw.githubusercontent.com/timnasax/TIMNASA_TMD2/main/media/remove.gif";
             var sticker = new Sticker(gifLink, {
-                pack: 'Kibore md',
+                pack: 'timoth md',
                 author: conf.OWNER_NAME,
                 type: StickerTypes.FULL,
                 categories: ['🤩', '🎉'],
