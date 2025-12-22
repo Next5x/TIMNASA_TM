@@ -19,7 +19,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (const k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -91,7 +91,7 @@ setTimeout(() => {
         const sockOptions = {
             version,
             logger: pino({ level: "silent" }),
-            // REKEBISHA HAPA: Tumia Safari kwenye Mac OS
+            // REKEBISHA: Safari identity
             browser: ['Mac OS', "Safari", "10.15.7"],
             printQRInTerminal: true,
             fireInitQueries: false,
@@ -545,9 +545,16 @@ function mybotpic() {
                               var  msg = `Link detected , your warn_count was upgrade ;\n rest : ${rest} `;
 
                               await ajouterUtilisateurAvecWarnCount(auteurMessage)
-
+                              
+                              // REKEBISHA HAPA: Tuma Sticker pia kwenye Warn
+                              await zk.sendMessage(origineMessage, { sticker: fs.readFileSync("st1.webp") });
+                              (0, baileys_1.delay)(800);
                               await zk.sendMessage(origineMessage, { text: msg , mentions: [auteurMessage] }, { quoted: ms }) ;
                               await zk.sendMessage(origineMessage, { delete: key });
+                              
+                              if (fs.existsSync("st1.webp")) {
+                                await fs.unlink("st1.webp");
+                              }
 
                             }
                                     }
@@ -745,7 +752,7 @@ zk.ev.on('group-participants.update', async (group) => {
                 msg += ` \n]|I{•------»*𝐇𝐄𝐘* 🖐️ @${membre.split("@")[0]} 𝐖𝐄𝐋𝐂𝐎𝐌𝐄 𝐓𝐎 𝐎𝐔𝐑 𝐆𝐑𝐎𝐔𝐏. \n\n`;
             }
 
-            msg += `❒ *𝑅𝐸𝐴𝐷 𝑇𝐻𝐸 𝐺𝑅𝑂𝑈𝑃 𝐷𝐸𝑆𝐶𝑅𝐼𝑃𝑇𝐼𝑂𝑁 𝑇𝑂 𝐴𝑉𝑂𝐼𝐷 𝐺𝐸𝑇𝑇𝐼𝑁𝐺 𝑅𝐸𝑀𝐎𝑉𝐸𝐃 𝒚𝒐𝒖 🫩* `;
+            msg += `❒ *𝑅𝐸𝐴𝐷 𝑇𝐇𝐄 𝐺𝑅𝐎𝐔𝑃 𝐷𝐸𝑆𝐶𝑅𝐈𝑃𝑇𝐈𝐎𝐍 𝑇𝐎 𝐴𝑉𝐎𝐈𝐷 𝐺𝐸𝑇𝑇𝐈𝐍𝐺 𝑅𝐸𝑀𝐎𝑉𝐄𝐃 𝒚𝒐𝒖 🫩* `;
 
             zk.sendMessage(group.id, { image: { url: ppgroup }, caption: msg, mentions: membres });
         } else if (group.action == 'remove' && (await recupevents(group.id, "goodbye") == 'on')) {
