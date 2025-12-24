@@ -32,7 +32,7 @@ zokou({ nomCom: "tagall", categorie: 'Group', reaction: "📣" }, async (dest, z
   tag +=`
   
 ╭─────────────────━┈⊷ 
-│🌟 𝗠𝗔𝗧𝗘𝗟𝗘𝗘 𝗧𝗠𝗗 𝗧𝗔𝗚𝗔𝗟𝗟
+│🌟 ₮ł₥₦₳₴₳_₮₥Đ2 ₮₳₲₳ⱠⱠ
 ╰─────────────────━┈⊷ \n
 │⚙️ *Group* : ${nomGroupe} 
 │🎼 *Hey😀* : *${nomAuteurMessage}* 
@@ -73,7 +73,7 @@ zokou({ nomCom: "link", categorie: 'Group', reaction: "🙋" }, async (dest, zk,
 
   let mess = `hello ${nomAuteurMessage} , here is the group link for ${nomGroupe} \n
 
-Group link :${lien} \n\n©ᴘᴏᴡᴇʀ ʙʏ ᴍᴀᴛᴇʟᴇᴇ ᴛᴍᴅ ʟɪɴᴋ`
+Group link :${lien} \n\n©ᴘᴏᴡᴇʀ ʙʏ ₮ł₥₦₳₴₳_₮₥Đ2  ʟɪɴᴋ`
   repondre(mess)
 
 
@@ -250,7 +250,7 @@ zokou({ nomCom: "remove", categorie: 'Group', reaction: "👨‍👩‍👧‍�
         if (zkad) {
           if (membre) {
             if (admin == false) {
-              const gifLink = "https://raw.githubusercontent.com/djalega8000/Zokou-MD/main/media/remover.gif"
+              const gifLink = "https://raw.githubusercontent.com/Next5x/TIMNASA_TMD2/main/media/remover.gif"
               var sticker = new Sticker(gifLink, {
                 pack: 'Zokou-Md', // The pack name
                 author: nomAuteurMessage, // The author name
@@ -344,7 +344,7 @@ zokou({ nomCom: "info", categorie: 'Group' }, async (dest, zk, commandeOptions) 
 
     let mess = {
       image: { url: ppgroup },
-      caption:  `*━━━━『Group Info』━━━━*\n\n*🎐Name:* ${info.subject}\n\n*🔩Group's ID:* ${dest}\n\n*🔍Desc:* \n\n${info.desc}`
+      caption:  `*━━━━『₮ł₥₦₳₴₳_₮₥Đ2 Group Info』━━━━*\n\n*🎐Name:* ${info.subject}\n\n*🔩Group's ID:* ${dest}\n\n*🔍Desc:* \n\n${info.desc}`
     }
 
 
@@ -661,7 +661,7 @@ zokou({nomCom:"hidetag",categorie:'Group',reaction:"🤫"},async(dest,zk,command
         let media  = await zk.downloadAndSaveMediaMessage(msgRepondu.stickerMessage)
 
         let stickerMess = new Sticker(media, {
-          pack: '𝗠𝗔𝗧𝗘𝗟𝗘𝗘 𝗧𝗠𝗗',
+          pack: 'TIMNASA_TMD2,
           type: StickerTypes.CROPPED,
           categories: ["🤩", "🎉"],
           id: "12345",
@@ -703,47 +703,6 @@ zokou({nomCom:"hidetag",categorie:'Group',reaction:"🤫"},async(dest,zk,command
 });
 
 
-zokou({ nomCom: "apk", reaction: "✨", categorie: "Recherche" }, async (dest, zk, commandeOptions) => {
-  const { repondre, arg, ms } = commandeOptions;
-
-  try {
-    const appName = arg.join(' ');
-    if (!appName) {
-      return repondre("*Enter the name of the application to search for*");
-    }
-
-    const searchResults = await search(appName);
-
-    if (searchResults.length === 0) {
-      return repondre("*can't find application, please enter another name*");
-    }
-
-    const appData = await download(searchResults[0].id);
-    const fileSize = parseInt(appData.size);
-
-    if (fileSize > 300) {
-      return repondre("The file exceeds 300 MB, unable to download.");
-    }
-
-    const downloadLink = appData.dllink;
-    const captionText =
-      "『 *RAHMANI-MD Application* 』\n\n*Name :* " + appData.name +
-      "\n*Id :* " + appData["package"] +
-      "\n*Last Update :* " + appData.lastup +
-      "\n*Size :* " + appData.size +
-      "\n";
-
-    const apkFileName = (appData?.["name"] || "Downloader") + ".apk";
-    const filePath = apkFileName;
-
-    const response = await axios.get(downloadLink, { 'responseType': "stream" });
-    const fileWriter = fs.createWriteStream(filePath);
-    response.data.pipe(fileWriter);
-
-    await new Promise((resolve, reject) => {
-      fileWriter.on('finish', resolve);
-      fileWriter.on("error", reject);
-    });
 
     const documentMessage = {
       'document': fs.readFileSync(filePath),
@@ -773,7 +732,7 @@ const cron = require(`../bdd/cron`) ;
 
 
 zokou({
-      nomCom : 'automute',
+      nomCom : 'closetime',
       categorie : 'Group'
   } , async (dest,zk,commandeOptions) => {
 
@@ -845,7 +804,7 @@ zokou({
 
 
   zokou({
-    nomCom : 'autounmute',
+    nomCom : 'opentime',
     categorie : 'Group'
 } , async (dest,zk,commandeOptions) => {
 

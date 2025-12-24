@@ -31,3 +31,5 @@ events('welcome');
 events('goodbye');
 events('antipromote');
 events('antidemote') ;
+events('antibot') ;
+events('antilen') ;
