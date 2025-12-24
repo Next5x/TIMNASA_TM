@@ -32,7 +32,7 @@ zokou({ nomCom: "repo", catégorie:"General", reaction: "👊", nomFichier: __fi
 ║║ 🕐 *UPDATE ON:* ${repoInfo.lastUpdate}
 ║║ 👨‍💻 *OWNER:* *DIL KANO*
 ║║ 💞 *NAME:* *TIMNASA*
-║║ 🥰 *ENJOY TO USE 𝐃𝚰𝐋 𝐊𝚫𝚴𝚯 𝚻𝚳𝐃 * ╚══━━━━════─━━━━──➳
+║║ 🥰 *ENJOY TO USE ₮ł₥₦₳₴₳_₮₥Đ2 ₮₳₲₳ⱠⱠ * ╚══━━━━════─━━━━──➳
 ╚══━━━━════─━━━━──➳`;
 
       await zk.sendMessage(dest, { image: { url: img }, caption: gitdata });
