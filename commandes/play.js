@@ -19,7 +19,7 @@ zokou({
         contextInfo: {
           isForwarded: true,
           forwardedNewsletterMessageInfo: {
-            newsletterJid: '120363399999197102@newsletter',
+            newsletterJid: '120363413554978773@newsletter',
             newsletterName: "╭••₮ł₥₦₳₴₳_₮₥Đ2",
             serverMessageId: 143,
           },
@@ -35,7 +35,7 @@ zokou({
         contextInfo: {
           isForwarded: true,
           forwardedNewsletterMessageInfo: {
-            newsletterJid: '120363399999197102@newsletter',
+            newsletterJid: '120363413554978773@newsletter',
             newsletterName: "╭••₮ł₥₦₳₴₳_₮₥Đ2",
             serverMessageId: 143,
           },
@@ -107,7 +107,7 @@ zokou({
           contextInfo: {
             isForwarded: true,
             forwardedNewsletterMessageInfo: {
-              newsletterJid: '120363399999197102@newsletter',
+              newsletterJid: '120363413554978773@newsletter',
               newsletterName: "╭•₮ł₥₦₳₴₳_₮₥Đ2",
               serverMessageId: 143,
             },
@@ -123,7 +123,7 @@ zokou({
           contextInfo: {
             isForwarded: true,
             forwardedNewsletterMessageInfo: {
-              newsletterJid: '120363399999197102@newsletter',
+              newsletterJid: '120363413554978773@newsletter',
               newsletterName: "╭••₮ł₥₦₳₴₳_₮₥Đ2",
               serverMessageId: 143,
             },
@@ -156,7 +156,7 @@ zokou({
             message: {
                 contactMessage: {
                     displayName: "₮ł₥₦₳₴₳_₮₥Đ2",
-                    vcard: `BEGIN:VCARD\nVERSION:3.0\nN:Njabulo-Jb;BOT;;;\nFN:Njabulo-Jb\nitem1.TEL;waid=26777821911:+26777821911\nitem1.X-ABLabel:Bot\nEND:VCARD`
+                    vcard: `BEGIN:VCARD\nVERSION:3.0\nN:TIMNASA_TMD1;BOT;;;\nFN:TIMNASA_TMD1\nitem1.TEL;waid=255784766591:+26777821911\nitem1.X-ABLabel:Bot\nEND:VCARD`
                 }
             }
         } }); 
