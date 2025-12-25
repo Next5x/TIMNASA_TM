@@ -767,7 +767,59 @@ if (conf.AUTO_REACT_STATUS === "yes") {
         }
     });
 }
+// Function ya kugundua Status Mention
+function isStatusMention(message) {
+    return !!(message?.groupStatusMentionMessage || message?.protocolMessage?.groupStatusMentionMessage);
+}
 
+// Function kuu ya kushughulikia ulinzi
+async function detectAndHandleStatusMention(zk, m, isBotAdmin, isGroupAdmin, isSuperAdmin) {
+    try {
+        const from = m.key.remoteJid;
+        const messageContent = m.message;
+        const sender = m.key.participant || m.key.remoteJid;
+
+        // 1. Zuia kama si group, kama ni bot yenyewe, au kama ni Admin
+        if (!from.endsWith('@g.us') || m.key.fromMe) return;
+        if (isGroupAdmin || isSuperAdmin) return;
+
+        // 2. Angalia kama kuna status mention
+        if (!isStatusMention(messageContent)) return;
+
+        console.log(`[STATUS MENTION] Imenaswa kutoka kwa: ${sender}`);
+
+        // 3. Kama bot si admin, itoe taarifa tu
+        if (!isBotAdmin) {
+            await zk.sendMessage(from, { 
+                text: `⚠️ @${sender.split('@')[0]} ametumia Status Mention! Promote bot iweze kumfuta.`,
+                mentions: [sender]
+            });
+            return;
+        }
+
+        // 4. Action: Futa ujumbe kwanza kila mara
+        await zk.sendMessage(from, { delete: m.key });
+
+        // 5. Chagua hatua (Hapa unaweza kuunganisha na DB yako, hapa nimeweka DEFAULT ni remove)
+        const action = "remove"; // Badilisha hapa iweze kusoma kutoka kwenye settings zako
+
+        if (action === "remove") {
+            await zk.groupParticipantsUpdate(from, [sender], 'remove');
+            await zk.sendMessage(from, { 
+                text: `🚫 Mtumiaji @${sender.split('@')[0]} ameondolewa kwa kutumia Status Mention!`,
+                mentions: [sender]
+            });
+        } else if (action === "warn") {
+            await zk.sendMessage(from, { 
+                text: `⚠️ @${sender.split('@')[0]}, onyo! Status mention haizuhusiwi hapa.`,
+                mentions: [sender]
+            });
+        }
+
+    } catch (e) {
+        console.log("Anti-Status Error: " + e);
+    }
+}        
 // Auto-react to regular messages if AUTO_REACT is enabled
 if (conf.AUTO_REACT === "yes") {
     console.log("AUTO_REACT is enabled. Listening for regular messages...");
