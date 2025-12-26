@@ -46,7 +46,7 @@ let evt = require(__dirname + "/framework/zokou");
 const {isUserBanned , addUserToBanList , removeUserFromBanList} = require("./bdd/banUser");
 const  {addGroupToBanList,isGroupBanned,removeGroupFromBanList} = require("./bdd/banGroup");
 const {isGroupOnlyAdmin,addGroupToOnlyAdminList,removeGroupFromOnlyAdminList} = require("./bdd/onlyAdmin");
-//const //{loadCmd}=require("/framework/mesfonctions")
+const {loadCmd}=require("/framework/mesfonctions")
 let { reagir } = require(__dirname + "/framework/app");
 
 // REKEBISHA HAPA: Tumia Regex inayoruhusu 'Zokou' au 'TIMNASA' prefix
@@ -766,59 +766,59 @@ if (conf.AUTO_REACT_STATUS === "yes") {
             }
         }
     });
-}
-// Function ya kugundua Status Mention
-function isStatusMention(message) {
-    return !!(message?.groupStatusMentionMessage || message?.protocolMessage?.groupStatusMentionMessage);
+      
+const fs = require('fs');
+const path = './database/antistatus.json';
+
+// Kazi ya kusoma settings toka kwenye file
+function getSettings() {
+    if (!fs.existsSync(path)) return {};
+    return JSON.parse(fs.readFileSync(path, 'utf-8'));
 }
 
-// Function kuu ya kushughulikia ulinzi
+// Kazi ya kuhifadhi settings
+function saveSettings(groupId, data) {
+    const settings = getSettings();
+    settings[groupId] = { ...settings[groupId], ...data };
+    fs.writeFileSync(path, JSON.stringify(settings, null, 2));
+}
+
+// Hii ndio function yako uliyoitengeneza nimeiboresha iunganishe DB
 async function detectAndHandleStatusMention(zk, m, isBotAdmin, isGroupAdmin, isSuperAdmin) {
     try {
         const from = m.key.remoteJid;
-        const messageContent = m.message;
-        const sender = m.key.participant || m.key.remoteJid;
+        if (!from.endsWith('@g.us')) return;
 
-        // 1. Zuia kama si group, kama ni bot yenyewe, au kama ni Admin
-        if (!from.endsWith('@g.us') || m.key.fromMe) return;
-        if (isGroupAdmin || isSuperAdmin) return;
+        const settings = getSettings()[from] || { status: 'om', action: 'delete' };
+        
+        if (settings.status === 'on') return; // Kama imezimwa, usifanye kitu
+        if (m.key.fromMe || isGroupAdmin || isSuperAdmin) return;
 
-        // 2. Angalia kama kuna status mention
-        if (!isStatusMention(messageContent)) return;
+        const isStatusMention = !!(m.message?.groupStatusMentionMessage);
+        if (!isStatusMention) return;
 
-        console.log(`[STATUS MENTION] Imenaswa kutoka kwa: ${sender}`);
-
-        // 3. Kama bot si admin, itoe taarifa tu
-        if (!isBotAdmin) {
-            await zk.sendMessage(from, { 
-                text: `⚠️ @${sender.split('@')[0]} ametumia Status Mention! Promote bot iweze kumfuta.`,
-                mentions: [sender]
-            });
-            return;
+        // 1. Futa meseji kwanza (Lazima uwe Admin)
+        if (isBotAdmin) {
+            await zk.sendMessage(from, { delete: m.key });
+        } else {
+            return await zk.sendMessage(from, { text: "⚠️ Nimeona Status Mention! Nifanye admin ili nichukue hatua." });
         }
 
-        // 4. Action: Futa ujumbe kwanza kila mara
-        await zk.sendMessage(from, { delete: m.key });
-
-        // 5. Chagua hatua (Hapa unaweza kuunganisha na DB yako, hapa nimeweka DEFAULT ni remove)
-        const action = "remove"; // Badilisha hapa iweze kusoma kutoka kwenye settings zako
-
-        if (action === "remove") {
+        // 2. Chukua Hatua (Action)
+        const sender = m.key.participant || from;
+        if (settings.action === 'remove') {
             await zk.groupParticipantsUpdate(from, [sender], 'remove');
-            await zk.sendMessage(from, { 
-                text: `🚫 Mtumiaji @${sender.split('@')[0]} ameondolewa kwa kutumia Status Mention!`,
-                mentions: [sender]
-            });
-        } else if (action === "warn") {
-            await zk.sendMessage(from, { 
-                text: `⚠️ @${sender.split('@')[0]}, onyo! Status mention haizuhusiwi hapa.`,
-                mentions: [sender]
-            });
+            await zk.sendMessage(from, { text: `🚫 @${sender.split('@')[0]} ameondolewa kwa kutumia Status Mention!`, mentions: [sender] });
+        } else if (settings.action === 'warn') {
+            await zk.sendMessage(from, { text: `⚠️ Onyo @${sender.split('@')[0]}! Status mention hairuhusiwi hapa.`, mentions: [sender] });
+        } else {
+            await zk.sendMessage(from, { text: `🗑️ Meseji ya @${sender.split('@')[0]} imefutwa (Status Mention).`, mentions: [sender] });
         }
-
     } catch (e) {
-        console.log("Anti-Status Error: " + e);
+        console.error("Anti-Status Error:", e);
     }
+}
+
 }        
 // Auto-react to regular messages if AUTO_REACT is enabled
 if (conf.AUTO_REACT === "yes") {
