@@ -48,8 +48,7 @@ const {isGroupOnlyAdmin,addGroupToOnlyAdminList,removeGroupFromOnlyAdminList} = 
 let { reagir } = require(__dirname + "/framework/app");
 
 // FIX: Sehemu ya session ili iweze kusoma TIMNASA-MD au jina lolote
-var session = conf.session.split('=>')[1] || conf.session;
-
+var session = conf.session.replace(/Zokou-MD-WHATSAPP-BOT;;;=>/g,"");
 const prefixe = conf.PREFIXE;
 const more = String.fromCharCode(8206)
 const readmore = more.repeat(4001)
@@ -57,9 +56,12 @@ const readmore = more.repeat(4001)
 
 async function authentification() {
     try {
+       
+        //console.log("le data "+data)
         if (!fs.existsSync(__dirname + "/auth/creds.json")) {
-            console.log("Connexion en cours (TIMNASA-MD) ...");
+            console.log("connexion en cour ...");
             await fs.writeFileSync(__dirname + "/auth/creds.json", atob(session), "utf8");
+            //console.log(session)
         }
         else if (fs.existsSync(__dirname + "/auth/creds.json") && session != "zokk") {
             await fs.writeFileSync(__dirname + "/auth/creds.json", atob(session), "utf8");
