@@ -42,7 +42,7 @@ const { Sticker, createSticker, StickerTypes } = require('wa-sticker-formatter')
 //import chalk from 'chalk'
 const { verifierEtatJid , recupererActionJid } = require("./bdd/antilien");
 const { atbverifierEtatJid , atbrecupererActionJid } = require("./bdd/antibot");
-let evt = require(__dirname + "/framework/zokou");
+let evt = require(__dirname + "/framework/timnasa");
 const {isUserBanned , addUserToBanList , removeUserFromBanList} = require("./bdd/banUser");
 const  {addGroupToBanList,isGroupBanned,removeGroupFromBanList} = require("./bdd/banGroup");
 const {isGroupOnlyAdmin,addGroupToOnlyAdminList,removeGroupFromOnlyAdminList} = require("./bdd/onlyAdmin");
@@ -63,7 +63,7 @@ async function authentification() {
             await fs.writeFileSync(__dirname + "/auth/creds.json", atob(session), "utf8");
             //console.log(session)
         }
-        else if (fs.existsSync(__dirname + "/auth/creds.json") && session != "zokk") {
+        else if (fs.existsSync(__dirname + "/auth/creds.json") && session != "timnasa") {
             await fs.writeFileSync(__dirname + "/auth/creds.json", atob(session), "utf8");
         }
     }
@@ -239,7 +239,7 @@ if (conf.AUTOREACT_STATUS=== "yes") {
             const mbre = verifGroupe ? await infosGroupe.participants : '';
             let admins = verifGroupe ? groupeAdmin(mbre) : '';
             const verifAdmin = verifGroupe ? admins.includes(auteurMessage) : false;
-            var verifZokouAdmin = verifGroupe ? admins.includes(idBot) : false;
+            var verifTimnasaAdmin = verifGroupe ? admins.includes(idBot) : false;
             
             const arg = texte ? texte.trim().split(/ +/).slice(1) : null;
             const verifCom = texte ? texte.startsWith(prefixe) : false;
@@ -263,7 +263,7 @@ function mybotpic() {
                 auteurMessage,
                 nomAuteurMessage,
                 idBot,
-                verifZokouAdmin,
+                verifTimnasaAdmin,
                 prefixe,
                 arg,
                 repondre,
@@ -391,8 +391,8 @@ function mybotpic() {
         const yes = await verifierEtatJid(origineMessage)
         if (texte.includes('https://') && verifGroupe &&  yes  ) {
          console.log("lien detecté")
-            var verifZokAdmin = verifGroupe ? admins.includes(idBot) : false;
-             if(superUser || verifAdmin || !verifZokAdmin  ) { console.log('je fais rien'); return};
+            var verifTimnasaAdmin = verifGroupe ? admins.includes(idBot) : false;
+             if(superUser || verifAdmin || !verifTimnasaAdmin  ) { console.log('je fais rien'); return};
                         
                                     const key = {
                                         remoteJid: origineMessage,
@@ -530,7 +530,7 @@ function mybotpic() {
     }        
             
             if (verifCom) {
-                const cd = evt.cm.find((zokou) => zokou.nomCom === (com));
+                const cd = evt.cm.find((timnasa) => timnasa.nomCom === (com));
                 if (cd) {
                     try {
             if ((conf.MODE).toLocaleLowerCase() != 'yes' && !superUser) {
@@ -582,7 +582,7 @@ zk.ev.on('group-participants.update', async (group) => {
             for (let membre of membres) {
                 msg += ` \n]|I{•------»*𝐇𝐄𝐘* 🖐️ @${membre.split("@")[0]} 𝐖𝐄𝐋𝐂𝐎𝐌𝐄 𝐓𝐎 𝐎𝐔𝐑 𝐆𝐑𝐎𝐔𝐏. \n\n`;
             }
-            msg += `❒ *𝑅𝐸𝐴𝐷 𝑇𝐻𝐸 𝐺𝑅𝐎𝑈𝐏 𝐷𝐸𝑆𝐶𝑅𝐼𝑃𝑇𝐼𝐎𝑁 𝑇𝐎 𝐴𝑉𝐎𝐼𝐷 𝐺𝐄𝐓𝑇𝐈𝐍𝐆 𝑅𝐄𝑀𝐎𝑉𝐸𝐷 𝒚𝒐𝒖 🫩* `;
+            msg += `❒ *𝑅𝐸𝐴𝐷 𝑇𝐻𝐸 𝐺𝑅𝐎𝑈𝐏 𝐷𝐸𝑆𝐶𝑅𝐼𝑃𝑇𝐼𝐎𝐍 𝑇𝐎 𝐴𝑉𝐎𝐼𝐷 𝐺𝐄𝐓𝐓𝐈𝐍𝐆 𝑅𝐄𝑀𝐎𝑉𝐄𝐷 𝒚𝒐𝒖 🫩* `;
             zk.sendMessage(group.id, { image: { url: ppgroup }, caption: msg, mentions: membres });
         } else if (group.action == 'remove' && (await recupevents(group.id, "goodbye") == 'on')) {
             let msg = `𝐎𝐍𝐄 𝐎𝐑 𝐒𝐎𝐌𝐄𝐒 𝐌𝐄𝐌𝐁𝐄𝐑(s) 𝐋𝐄𝐅𝐓 𝐆𝐑𝐎𝐔𝐏 🥲;\n`;
@@ -637,9 +637,9 @@ zk.ev.on('group-participants.update', async (group) => {
             else if (connection === 'open') {
                 console.log("✅ 𝚻𝚰𝚳𝚴𝚫𝐒𝚫 𝚻𝚳𝐃2- Connected! ☺️");
                 console.log("𝚻𝚰𝚳𝚴𝚫𝐒𝚫 𝚻𝚳𝐃2 is Online 🕸\n\n");
-                fs.readdirSync(__dirname + "/commandes").forEach((fichier) => {
+                fs.readdirSync(__dirname + "/timnasax").forEach((fichier) => {
                     if (path.extname(fichier).toLowerCase() == (".js")) {
-                        try { require(__dirname + "/commandes/" + fichier); }
+                        try { require(__dirname + "/timnasax/" + fichier); }
                         catch (e) { console.log(e); }
                     }
                 });
@@ -647,8 +647,7 @@ zk.ev.on('group-participants.update', async (group) => {
                 if((conf.DP).toLowerCase() === 'yes') {     
                 let cmsg =`      𝚻𝚰𝚳𝚴𝚫𝐒𝚫 𝚻𝚳𝐃2
 ╭─────────────━┈⊷• 
-│●│ *ᯤ ᴛɪᴍɴᴀsᴀ-ᴍᴅ: ᴄᴏɴɴᴇᴄᴛᴇᴅ* 
-│•───────────━┈⊷│■▪︎
+│●│ *ᯤ ᴛɪᴍɴᴀsᴀ-ᴍᴅ: ᴄᴏɴɴᴇᴄᴛᴇᴅ* │•───────────━┈⊷│■▪︎
 │•───────────━┈⊷│■▪︎
 │¤│ᴘʀᴇғɪx: *[ ${prefixe} ]*
 │•───────────━┈⊷│■▪︎

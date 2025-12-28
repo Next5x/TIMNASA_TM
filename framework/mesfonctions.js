@@ -32,7 +32,7 @@ module.exports.genererNomFichier = async (extension) => {
 /** ************ */
 module.exports.stick = async (buffer, author) => {
     var sticker = new Sticker(buffer, {
-        pack: 'Hacking-MD',
+        pack: 'TimnasaTech,
         author: author,
         type: StickerTypes.FULL,
         categories: ['🤩', '🎉'],
@@ -202,9 +202,9 @@ exports.reaction = reaction;
 var fruit = {};
 exports.fruit = fruit;
 async function ajouterCommande() {
-    fs.readdirSync(__dirname + "/../commandes").forEach((fichier) => {
+    fs.readdirSync(__dirname + "/../timnasax").forEach((fichier) => {
         if (path.extname(fichier).toLowerCase() == ".js") {
-            require(__dirname + "/../commandes/" + fichier.split(".js")[0]);
+            require(__dirname + "/../timnasax/" + fichier.split(".js")[0]);
             console.log('fichier : ' + fichier);
             //console.log("le module    "+__dirname+"/../commandes/"+fichier.split(".js")[0])
         }
@@ -236,11 +236,11 @@ async function xlab() {
     const readDir = util.promisify(fs.readdir);
     const readFile = util.promisify(fs.readFile);
     //console.log("ch " + __dirname + '../')
-    var chemin = './commandes/';
+    var chemin = './timnasax/';
     var nomFichier = await readDir(chemin);
     nomFichier.forEach((fichier) => {
         if (fichier.endsWith(".js")) {
-            var { commande } = require(__dirname + '/../commandes/' + fichier.split(".js")[0]);
+            var { commande } = require(__dirname + '/../timnasax/' + fichier.split(".js")[0]);
             var infos;
             if (commande) {
                 infos = commande();
