@@ -1,5 +1,5 @@
 
-const { timoth } = require("../framework/timoth");
+const { zokou } = require("../framework/zokou");
 const axios = require('axios');
 const conf = require(__dirname + '/../set');
 const moment = require("moment-timezone");
@@ -7,14 +7,14 @@ const { generateWAMessageContent, generateWAMessageFromContent } = require('@whi
 
 
 // ── Random image for the header ─────────────────────────────────
-const njabulox = [
+const randomNbre = [
   "",
   "https://files.catbox.moe/mhhku3.jpeg",
   "https://files.catbox.moe/t5v7hj.jpg",
   "https://files.catbox.moe/x0zjpf.jpg",
   "https://files.catbox.moe/bnb3vx.jpg"
 ];
-const randomNjabulourl = njabulox[Math.floor(Math.random() * njabulox.length)];
+const randomNbreurl = Nbre[Math.floor(Math.random() * Nbre.length)];
 
 // ── Helper: simple delay (debug) ─────────────────────────────────
 function delay(ms) {
@@ -44,9 +44,9 @@ function formatDuration(sec) {
 }
 
 // ── Main ping command ───────────────────────────────────────────
-timoth(
+zokou(
   {
-    nomCom: "pin",
+    nomCom: "ping",
     desc: "Check bot response time",
     Categorie: "General",
     reaction: "🏓",
