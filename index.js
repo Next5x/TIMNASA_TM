@@ -113,9 +113,6 @@ setTimeout(() => {
         store.bind(zk.ev);
         // Replace the status reaction code with this:
 
-        const zk = (0, baileys_1.default)(sockOptions);
-        store.bind(zk.ev);
-
 
      // List of image URLs
     const catbox = [
