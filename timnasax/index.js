@@ -1,6 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const { zokou } = require("../framework/zokou");
+const ({zokou})= require ("../framework/zokou");
+const { zokou } = require("../wa-sticker-formatter");
 
 zokou({
     nomCom: "toa",
