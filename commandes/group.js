@@ -1,32 +1,105 @@
 
 
-
-
-
-
 const { zokou } = require("../framework/zokou")
-//const { getGroupe } = require("../bdd/groupe")
+//const { getGroupe } = require("../luckydatabase/groupe")
 const { Sticker, StickerTypes } = require('wa-sticker-formatter');
-const {ajouterOuMettreAJourJid,mettreAJourAction,verifierEtatJid} = require("../bdd/antilien")
-const {atbajouterOuMettreAJourJid,atbverifierEtatJid} = require("../bdd/antibot")
+const {ajouterOuMettreAJourJid,mettreAJourAction,verifierEtatJid} = require("../media/antilien")
+const {atbajouterOuMettreAJourJid,atbverifierEtatJid} = require("../media/antibot")
 const { search, download } = require("aptoide-scraper");
+const baileys = require ("whiskeysockets/baileys");
 const fs = require("fs-extra");
 const conf = require("../set");
 const { default: axios } = require('axios');
-//const { uploadImageToImgur } = require('../framework/imgur');
+const {ajouterUtilisateurAvecWarnCount , getWarnCountByJID , resetWarnCountByJID} = require('../media/warn')
+const s = require("../set")
+//const { uploadImageToImgur } = require('../fredi/imgur');
 
 
 
+// COMMAND TO WARN USERS GROUP 
+zokou(
+    {
+        nomCom : 'warn',
+        categorie : 'Group'
+        
+    },async (dest,zk,commandeOptions) => {
+
+ const {ms , arg, repondre,superUser,verifGroupe,verifAdmin , msgRepondu , auteurMsgRepondu} = commandeOptions;
+if(!verifGroupe ) {repondre('this is a group commands') ; return};
+
+if(verifAdmin || superUser) {
+   if(!msgRepondu){repondre('reply a message of user to warn'); return};
+   
+   if (!arg || !arg[0] || arg.join('') === '') {
+    await ajouterUtilisateurAvecWarnCount(auteurMsgRepondu)
+   let warn = await getWarnCountByJID(auteurMsgRepondu)
+   let warnlimit = s.WARN_COUNT
+   
+   if( warn >= warnlimit ) { await repondre('this user reach limit of warning , so i kick him/her');
+                zk.groupParticipantsUpdate(dest, [auteurMsgRepondu], "remove")
+ } else { 
+
+    var rest = warnlimit - warn ;
+     repondre(`this user is warn , rest before kick : ${rest} `)
+   }
+} else if ( arg[0] === 'reset') { await resetWarnCountByJID(auteurMsgRepondu) 
+
+    repondre("Warn count is reset for this user")} else ( repondre('reply to a user by typing  .warn ou .warn reset'))
+   
+}  else {
+    repondre('you are not admin')
+}
+ 
+   });
+   
+   
+ // COMMAND TO GETALLMEMBERS 
+zokou({ nomCom: "getallmembers", categorie: 'Group', reaction: "📣" }, async (dest, zk, commandeOptions) => {
+  const { ms, repondre, arg, verifGroupe, nomGroupe, infosGroupe, nomAuteurMessage, verifAdmin, superUser } = commandeOptions;
+
+  if (!verifGroupe) return repondre("✋🏿 This command is reserved for groups ❌");
+
+  let mess = Array.isArray(arg) && arg.length ? arg.join(' ') : 'No message provided';
+  let membresGroupe = verifGroupe && infosGroupe ? infosGroupe.participants || [] : [];
+
+  let tag = `☢️𝚻𝚰𝚳𝚴𝚫𝐒𝚫-𝚻𝚳𝐃☢️\n\n┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈\n  
+        🌟 *GROUP MEMBERS GIDS* 🌟
+┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈\n
+> regards timnasatimoth®\n\n`;
+
+  const emoji = ['💡', '☢️', '🗡️', '🖌️', '🪫', '🔋', '⚙️', '🕶️', '🌡️', '✏️', '📌', '©️', '$','®️','™️','⚔️','🔏'];
+  const randomEmoji = emoji[Math.floor(Math.random() * emoji.length)];
+
+  let mentions = [];
+  membresGroupe.forEach((membre, index) => {
+    let userJid = `${membre.id}`; // Ensure the full JID format
+    tag += `${index + 1}. ${randomEmoji} ${userJid}\n`;
+    mentions.push(userJid);
+  });
+
+  if (verifAdmin || superUser) {
+    console.log("Sending message to:", dest);
+    console.log("Message:", tag);
+    console.log("Mentions:", mentions);
+
+    zk.sendMessage(dest, { text: tag, mentions }, { quoted: ms })
+      .then(() => console.log("Message sent successfully"))
+      .catch(err => console.error("Error sending message:", err));
+  } else {
+    repondre("❌ Command reserved for admins.");
+  }
+});
 
 
-zokou({ nomCom: "tagall", categorie: 'Group', reaction: "📣" }, async (dest, zk, commandeOptions) => {
+// COMMAND TO TAGALL
+zokou({ nomCom: "tagall", categorie: 'Group', reaction: "📯" }, async (dest, zk, commandeOptions) => {
 
   const { ms, repondre, arg, verifGroupe, nomGroupe, infosGroupe, nomAuteurMessage, verifAdmin, superUser } = commandeOptions
 
 
  
 
-  if (!verifGroupe) { repondre("✋🏿 ✋🏿this command is reserved for groups ❌"); return; }
+  if (!verifGroupe) { repondre("⚠️ uuuuhh Dr this command is reserved for groups ❌"); return; }
   if (!arg || arg === ' ') {
   mess = 'Aucun Message'
   } else {
@@ -34,15 +107,13 @@ zokou({ nomCom: "tagall", categorie: 'Group', reaction: "📣" }, async (dest, z
   } ;
   let membresGroupe = verifGroupe ? await infosGroupe.participants : ""
   var tag = ""; 
-  tag +=`
-  
-╭─────────────────━┈⊷ 
-│🌟 𝗠𝗔𝗧𝗘𝗟𝗘𝗘 𝗧𝗠𝗗 𝗧𝗔𝗚𝗔𝗟𝗟
-╰─────────────────━┈⊷ \n
-│⚙️ *Group* : ${nomGroupe} 
-│🎼 *Hey😀* : *${nomAuteurMessage}* 
-│🎊 *Message* : *${mess}* 
-╰─────────────━┈⊷\n
+  tag += `┈┈┈┈┈┈┈┈┈┈┈┈┈┈\n  
+        🌟 *𝚻𝚰𝚳𝚴𝚫𝐒𝚫-𝚻𝚳𝐃 TAGS* 🌟
+┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈\n
+👥 Group : ${nomGroupe} 🚀 
+👤 Autor : *${nomAuteurMessage}* 👋 
+📜 Message : *${mess}* 📝
+┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈\n
 \n
 
 ` ;
@@ -50,7 +121,7 @@ zokou({ nomCom: "tagall", categorie: 'Group', reaction: "📣" }, async (dest, z
 
 
 
-  let emoji = ['🦴', '👀', '😮‍💨', '❌', '✔️', '😇', '⚙️', '🔧', '🎊', '😡', '🙏🏿', '⛔️', '$','😟','🥵','🐅']
+  let emoji = ['💡', '☢️', '🗡️', '🖌️', '🪫', '🔋', '⚙️', '🕶️', '🌡️', '✏️', '📌', '©️', '$','®️','™️','⚔️','🔏']
   let random = Math.floor(Math.random() * (emoji.length - 1))
 
 
@@ -68,7 +139,8 @@ zokou({ nomCom: "tagall", categorie: 'Group', reaction: "📣" }, async (dest, z
 });
 
 
-zokou({ nomCom: "link", categorie: 'Group', reaction: "🙋" }, async (dest, zk, commandeOptions) => {
+// COMMAND TO LINK GROUP 
+zokou({ nomCom: "link", categorie: 'Group', reaction: "🚜" }, async (dest, zk, commandeOptions) => {
   const { repondre, nomGroupe, nomAuteurMessage, verifGroupe } = commandeOptions;
   if (!verifGroupe) { repondre("wait bro , you want the link to my dm?"); return; };
 
@@ -78,13 +150,16 @@ zokou({ nomCom: "link", categorie: 'Group', reaction: "🙋" }, async (dest, zk,
 
   let mess = `hello ${nomAuteurMessage} , here is the group link for ${nomGroupe} \n
 
-Group link :${lien} \n\n©ᴘᴏᴡᴇʀ ʙʏ ᴍᴀᴛᴇʟᴇᴇ ᴛᴍᴅ ʟɪɴᴋ`
+Grp link :${lien} \n\n★ᴍᴀᴅᴇ ғʀᴏᴍ ᴛᴀɴᴢᴀɴɪᴀ 🇹🇿`
   repondre(mess)
 
 
 });
+
+
+// COMMAND TO PROMOTE ADM
 /** *nommer un membre comme admin */
-zokou({ nomCom: "promote", categorie: 'Group', reaction: "💕" }, async (dest, zk, commandeOptions) => {
+zokou({ nomCom: "promote", categorie: 'Group', reaction: "💐" }, async (dest, zk, commandeOptions) => {
   let { repondre, msgRepondu, infosGroupe, auteurMsgRepondu, verifGroupe, auteurMessage, superUser, idBot } = commandeOptions;
   let membresGroupe = verifGroupe ? await infosGroupe.participants : ""
   if (!verifGroupe) { return repondre("For groups only"); }
@@ -120,7 +195,7 @@ zokou({ nomCom: "promote", categorie: 'Group', reaction: "💕" }, async (dest, 
   let autAdmin = verifGroupe ? a.includes(auteurMessage) : false;
   zkad = verifGroupe ? a.includes(idBot) : false;
   try {
-    // repondre(verifZokouAdmin)
+    // repondre(veriftimothAdmin)
 
     if (autAdmin || superUser) {
       if (msgRepondu) {
@@ -128,7 +203,7 @@ zokou({ nomCom: "promote", categorie: 'Group', reaction: "💕" }, async (dest, 
           if (membre) {
             if (admin == false) {
               var txt = `🎊🎊🎊  @${auteurMsgRepondu.split("@")[0]} rose in rank.\n
-                      he/she has been named group administrator.`
+                      he/she has been Promote To Admin.`
               await zk.groupParticipantsUpdate(dest, [auteurMsgRepondu], "promote");
               zk.sendMessage(dest, { text: txt, mentions: [auteurMsgRepondu] })
             } else { return repondre("This member is already an administrator of the group.") }
@@ -143,10 +218,8 @@ zokou({ nomCom: "promote", categorie: 'Group', reaction: "💕" }, async (dest, 
 
 })
 
-//fin nommer
-/** ***demettre */
-
-zokou({ nomCom: "demote", categorie: 'Group', reaction: "👨‍👩‍👧‍👧" }, async (dest, zk, commandeOptions) => {
+// COMMAND TO DEMOTE ADM
+zokou({ nomCom: "demote", categorie: 'Group', reaction: "👨🏿‍💼" }, async (dest, zk, commandeOptions) => {
   let { repondre, msgRepondu, infosGroupe, auteurMsgRepondu, verifGroupe, auteurMessage, superUser, idBot } = commandeOptions;
   let membresGroupe = verifGroupe ? await infosGroupe.participants : ""
   if (!verifGroupe) { return repondre("For groups only"); }
@@ -182,7 +255,7 @@ zokou({ nomCom: "demote", categorie: 'Group', reaction: "👨‍👩‍👧‍�
   let autAdmin = verifGroupe ? a.includes(auteurMessage) : false;
   zkad = verifGroupe ? a.includes(idBot) : false;
   try {
-    // repondre(verifZokouAdmin)
+    // repondre(verifezraAdmin)
 
     if (autAdmin || superUser) {
       if (msgRepondu) {
@@ -209,10 +282,8 @@ zokou({ nomCom: "demote", categorie: 'Group', reaction: "👨‍👩‍👧‍�
 })
 
 
-
-/** ***fin démettre****  **/
-/** **retirer** */
-zokou({ nomCom: "remove", categorie: 'Group', reaction: "👨‍👩‍👧‍👧" }, async (dest, zk, commandeOptions) => {
+// COMMAND TO REMOVE MEMBERS 
+zokou({ nomCom: "remove", categorie: 'Group', reaction: "😱" }, async (dest, zk, commandeOptions) => {
   let { repondre, msgRepondu, infosGroupe, auteurMsgRepondu, verifGroupe, nomAuteurMessage, auteurMessage, superUser, idBot } = commandeOptions;
   let membresGroupe = verifGroupe ? await infosGroupe.participants : ""
   if (!verifGroupe) { return repondre("for groups only"); }
@@ -248,16 +319,16 @@ zokou({ nomCom: "remove", categorie: 'Group', reaction: "👨‍👩‍👧‍�
   let autAdmin = verifGroupe ? a.includes(auteurMessage) : false;
   zkad = verifGroupe ? a.includes(idBot) : false;
   try {
-    // repondre(verifZokouAdmin)
+    // repondre(verifezraAdmin)
 
     if (autAdmin || superUser) {
       if (msgRepondu) {
         if (zkad) {
           if (membre) {
             if (admin == false) {
-              const gifLink = "https://raw.githubusercontent.com/djalega8000/Zokou-MD/main/media/remover.gif"
+              const gifLink = "https://raw.githubusercontent.com/Next5x/TIMNASA-TMD2/main/media/remover.gif"
               var sticker = new Sticker(gifLink, {
-                pack: 'Zokou-Md', // The pack name
+                pack: 'TIMNASA_TMD', // The pack name
                 author: nomAuteurMessage, // The author name
                 type: StickerTypes.FULL, // The sticker type
                 categories: ['🤩', '🎉'], // The sticker category
@@ -284,10 +355,7 @@ zokou({ nomCom: "remove", categorie: 'Group', reaction: "👨‍👩‍👧‍�
 
 })
 
-
-/** *****fin retirer */
-
-
+// COMMAND TO DELETE 
 zokou({ nomCom: "del", categorie: 'Group',reaction:"🧹" }, async (dest, zk, commandeOptions) => {
 
   const { ms, repondre, verifGroupe,auteurMsgRepondu,idBot, msgRepondu, verifAdmin, superUser} = commandeOptions;
@@ -336,6 +404,7 @@ zokou({ nomCom: "del", categorie: 'Group',reaction:"🧹" }, async (dest, zk, co
 
 });
 
+// COMMAND TO GRUP INFO
 zokou({ nomCom: "info", categorie: 'Group' }, async (dest, zk, commandeOptions) => {
   const { ms, repondre, verifGroupe } = commandeOptions;
   if (!verifGroupe) { repondre("order reserved for the group only"); return };
@@ -349,7 +418,7 @@ zokou({ nomCom: "info", categorie: 'Group' }, async (dest, zk, commandeOptions) 
 
     let mess = {
       image: { url: ppgroup },
-      caption:  `*━━━━『Group Info』━━━━*\n\n*🎐Name:* ${info.subject}\n\n*🔩Group's ID:* ${dest}\n\n*🔍Desc:* \n\n${info.desc}`
+      caption:  `☢️𝚻𝚰𝚳𝚴𝚫𝐒𝚫-𝚻𝚳𝐃☢️\n\n*━━━━『𝙶𝚁𝙾𝚄𝙿 𝙸𝙽𝙵𝙾』━━━━*\n\n*🎐Name:* ${info.subject}\n\n*🔩Group's ID:* ${dest}\n\n*🔍Desc:* \n\n${info.desc}`
     }
 
 
@@ -358,9 +427,8 @@ zokou({ nomCom: "info", categorie: 'Group' }, async (dest, zk, commandeOptions) 
 
 
 
- //------------------------------------antilien-------------------------------
-
- zokou({ nomCom: "antilink", categorie: 'Group', reaction: "⚡" }, async (dest, zk, commandeOptions) => {
+ // COMMAND TO ACTVATE ANTILINK GROUP
+ zokou({ nomCom: "antilink", categorie: 'Group', reaction: "🔗" }, async (dest, zk, commandeOptions) => {
 
 
   var { repondre, arg, verifGroupe, superUser, verifAdmin } = commandeOptions;
@@ -426,9 +494,9 @@ zokou({ nomCom: "info", categorie: 'Group' }, async (dest, zk, commandeOptions) 
 
 
 
- //------------------------------------antibot-------------------------------
+ // COMMAND TO ACTIVATE ANTIBOT
 
- zokou({ nomCom: "antibot", categorie: 'Group', reaction: "😬" }, async (dest, zk, commandeOptions) => {
+ zokou({ nomCom: "antibot", categorie: 'Group', reaction: "👾" }, async (dest, zk, commandeOptions) => {
 
 
   var { repondre, arg, verifGroupe, superUser, verifAdmin } = commandeOptions;
@@ -492,9 +560,9 @@ zokou({ nomCom: "info", categorie: 'Group' }, async (dest, zk, commandeOptions) 
 
 });
 
-//----------------------------------------------------------------------------
+// COMMAND TO GROUP ACTION OPN/CLS
 
-zokou({ nomCom: "group", categorie: 'Group' }, async (dest, zk, commandeOptions) => {
+zokou({ nomCom: "Group", categorie: 'group' }, async (dest, zk, commandeOptions) => {
 
   const { repondre, verifGroupe, verifAdmin, superUser, arg } = commandeOptions;
 
@@ -524,7 +592,8 @@ zokou({ nomCom: "group", categorie: 'Group' }, async (dest, zk, commandeOptions)
 
 });
 
-zokou({ nomCom: "left", categorie: "Mods" }, async (dest, zk, commandeOptions) => {
+// COMMAND ACTION TO LEFT GRfalse
+zokou({ nomCom: "left", categorie: "Group" }, async (dest, zk, commandeOptions) => {
 
   const { repondre, verifGroupe, superUser } = commandeOptions;
   if (!verifGroupe) { repondre("order reserved for group only"); return };
@@ -537,6 +606,7 @@ zokou({ nomCom: "left", categorie: "Mods" }, async (dest, zk, commandeOptions) =
   zk.groupLeave(dest)
 });
 
+// COMMAND TO EDIT GROUP NAME
 zokou({ nomCom: "gname", categorie: 'Group' }, async (dest, zk, commandeOptions) => {
 
   const { arg, repondre, verifAdmin } = commandeOptions;
@@ -556,6 +626,7 @@ zokou({ nomCom: "gname", categorie: 'Group' }, async (dest, zk, commandeOptions)
  
 }) ;
 
+// COMMAND TO EDIT GROUP DESK
 zokou({ nomCom: "gdesc", categorie: 'Group' }, async (dest, zk, commandeOptions) => {
 
   const { arg, repondre, verifAdmin } = commandeOptions;
@@ -575,7 +646,7 @@ zokou({ nomCom: "gdesc", categorie: 'Group' }, async (dest, zk, commandeOptions)
  
 }) ;
 
-
+// COMMAND TO GET GROUP PROFILE PHOTO
 zokou({ nomCom: "gpp", categorie: 'Group' }, async (dest, zk, commandeOptions) => {
 
   const { repondre, msgRepondu, verifAdmin } = commandeOptions;
@@ -600,8 +671,8 @@ zokou({ nomCom: "gpp", categorie: 'Group' }, async (dest, zk, commandeOptions) =
 
 });
 
-/////////////
-zokou({nomCom:"hidetag",categorie:'Group',reaction:"🤫"},async(dest,zk,commandeOptions)=>{
+// COMMAND TO TAG ALL MEMBERS
+zokou({nomCom:"tag",categorie:'Group',reaction:"🎤"},async(dest,zk,commandeOptions)=>{
 
   const {repondre,msgRepondu,verifGroupe,arg ,verifAdmin , superUser}=commandeOptions;
 
@@ -666,7 +737,7 @@ zokou({nomCom:"hidetag",categorie:'Group',reaction:"🤫"},async(dest,zk,command
         let media  = await zk.downloadAndSaveMediaMessage(msgRepondu.stickerMessage)
 
         let stickerMess = new Sticker(media, {
-          pack: '𝗠𝗔𝗧𝗘𝗟𝗘𝗘 𝗧𝗠𝗗',
+          pack: '𝚻𝚰𝚳𝚴𝚫𝐒𝚫-𝚻𝚳𝐃',
           type: StickerTypes.CROPPED,
           categories: ["🤩", "🎉"],
           id: "12345",
@@ -708,77 +779,229 @@ zokou({nomCom:"hidetag",categorie:'Group',reaction:"🤫"},async(dest,zk,command
 });
 
 
-zokou({ nomCom: "apk", reaction: "✨", categorie: "Recherche" }, async (dest, zk, commandeOptions) => {
-  const { repondre, arg, ms } = commandeOptions;
+// COMMAND TO TAG ALL MEMBERS
+zokou({nomCom:"hidetag",categorie:'Group',reaction:"🎤"},async(dest,zk,commandeOptions)=>{
 
-  try {
-    const appName = arg.join(' ');
-    if (!appName) {
-      return repondre("*Enter the name of the application to search for*");
-    }
+  const {repondre,msgRepondu,verifGroupe,arg ,verifAdmin , superUser}=commandeOptions;
 
-    const searchResults = await search(appName);
+  if(!verifGroupe)  { repondre('This command is only allowed in groups.')} ;
+  if (verifAdmin || superUser) { 
 
-    if (searchResults.length === 0) {
-      return repondre("*can't find application, please enter another name*");
-    }
+  let metadata = await zk.groupMetadata(dest) ;
 
-    const appData = await download(searchResults[0].id);
-    const fileSize = parseInt(appData.size);
+  //console.log(metadata.participants)
+ let tag = [] ;
+  for (const participant of metadata.participants ) {
 
-    if (fileSize > 300) {
-      return repondre("The file exceeds 300 MB, unable to download.");
-    }
-
-    const downloadLink = appData.dllink;
-    const captionText =
-      "『 *RAHMANI-MD Application* 』\n\n*Name :* " + appData.name +
-      "\n*Id :* " + appData["package"] +
-      "\n*Last Update :* " + appData.lastup +
-      "\n*Size :* " + appData.size +
-      "\n";
-
-    const apkFileName = (appData?.["name"] || "Downloader") + ".apk";
-    const filePath = apkFileName;
-
-    const response = await axios.get(downloadLink, { 'responseType': "stream" });
-    const fileWriter = fs.createWriteStream(filePath);
-    response.data.pipe(fileWriter);
-
-    await new Promise((resolve, reject) => {
-      fileWriter.on('finish', resolve);
-      fileWriter.on("error", reject);
-    });
-
-    const documentMessage = {
-      'document': fs.readFileSync(filePath),
-      'mimetype': 'application/vnd.android.package-archive',
-      'fileName': apkFileName
-    };
-
-    // Utilisation d'une seule méthode sendMessage pour envoyer l'image et le document
-    zk.sendMessage(dest, { image: { url: appData.icon }, caption: captionText }, { quoted: ms });
-    zk.sendMessage(dest, documentMessage, { quoted: ms });
-
-    // Supprimer le fichier après envoi
-    fs.unlinkSync(filePath);
-  } catch (error) {
-    console.error('Erreur lors du traitement de la commande apk:', error);
-    repondre("*Error during apk command processing*");
+      tag.push(participant.id) ;
   }
+  //console.log(tag)
+
+    if(msgRepondu) {
+      console.log(msgRepondu)
+      let msg ;
+
+      if (msgRepondu.imageMessage) {
+
+        
+
+     let media  = await zk.downloadAndSaveMediaMessage(msgRepondu.imageMessage) ;
+     // console.log(msgRepondu) ;
+     msg = {
+
+       image : { url : media } ,
+       caption : msgRepondu.imageMessage.caption,
+       mentions :  tag
+       
+     }
+    
+
+      } else if (msgRepondu.videoMessage) {
+
+        let media  = await zk.downloadAndSaveMediaMessage(msgRepondu.videoMessage) ;
+
+        msg = {
+
+          video : { url : media } ,
+          caption : msgRepondu.videoMessage.caption,
+          mentions :  tag
+          
+        }
+
+      } else if (msgRepondu.audioMessage) {
+    
+        let media  = await zk.downloadAndSaveMediaMessage(msgRepondu.audioMessage) ;
+       
+        msg = {
+   
+          audio : { url : media } ,
+          mimetype:'audio/mp4',
+          mentions :  tag
+           }     
+        
+      } else if (msgRepondu.stickerMessage) {
+
+    
+        let media  = await zk.downloadAndSaveMediaMessage(msgRepondu.stickerMessage)
+
+        let stickerMess = new Sticker(media, {
+          pack: '𝚻𝚰𝚳𝚴𝚫𝐒𝚫-𝚻𝚳𝐃',
+          type: StickerTypes.CROPPED,
+          categories: ["🤩", "🎉"],
+          id: "12345",
+          quality: 70,
+          background: "transparent",
+        });
+        const stickerBuffer2 = await stickerMess.toBuffer();
+       
+        msg = { sticker: stickerBuffer2 , mentions : tag}
+
+
+      }  else {
+          msg = {
+             text : msgRepondu.conversation,
+             mentions : tag
+          }
+      }
+
+    zk.sendMessage(dest,msg)
+
+    } else {
+
+        if(!arg || !arg[0]) { repondre('Enter the text to announce or mention the message to announce');
+        ; return} ;
+
+      zk.sendMessage(
+         dest,
+         {
+          text : arg.join(' ') ,
+          mentions : tag
+         }     
+      )
+    }
+
+} else {
+  repondre('Command reserved for administrators.')
+}
+
 });
 
 
+// COMMAND TO TAG ALL MEMBERS
+zokou({nomCom:"htag",categorie:'Group',reaction:"🎤"},async(dest,zk,commandeOptions)=>{
 
+  const {repondre,msgRepondu,verifGroupe,arg ,verifAdmin , superUser}=commandeOptions;
+
+  if(!verifGroupe)  { repondre('This command is only allowed in groups.')} ;
+  if (verifAdmin || superUser) { 
+
+  let metadata = await zk.groupMetadata(dest) ;
+
+  //console.log(metadata.participants)
+ let tag = [] ;
+  for (const participant of metadata.participants ) {
+
+      tag.push(participant.id) ;
+  }
+  //console.log(tag)
+
+    if(msgRepondu) {
+      console.log(msgRepondu)
+      let msg ;
+
+      if (msgRepondu.imageMessage) {
+
+        
+
+     let media  = await zk.downloadAndSaveMediaMessage(msgRepondu.imageMessage) ;
+     // console.log(msgRepondu) ;
+     msg = {
+
+       image : { url : media } ,
+       caption : msgRepondu.imageMessage.caption,
+       mentions :  tag
+       
+     }
+    
+
+      } else if (msgRepondu.videoMessage) {
+
+        let media  = await zk.downloadAndSaveMediaMessage(msgRepondu.videoMessage) ;
+
+        msg = {
+
+          video : { url : media } ,
+          caption : msgRepondu.videoMessage.caption,
+          mentions :  tag
+          
+        }
+
+      } else if (msgRepondu.audioMessage) {
+    
+        let media  = await zk.downloadAndSaveMediaMessage(msgRepondu.audioMessage) ;
+       
+        msg = {
+   
+          audio : { url : media } ,
+          mimetype:'audio/mp4',
+          mentions :  tag
+           }     
+        
+      } else if (msgRepondu.stickerMessage) {
+
+    
+        let media  = await zk.downloadAndSaveMediaMessage(msgRepondu.stickerMessage)
+
+        let stickerMess = new Sticker(media, {
+          pack: '𝚻𝚰𝚳𝚴𝚫𝐒𝚫-𝚻𝚳𝐃',
+          type: StickerTypes.CROPPED,
+          categories: ["🤩", "🎉"],
+          id: "12345",
+          quality: 70,
+          background: "transparent",
+        });
+        const stickerBuffer2 = await stickerMess.toBuffer();
+       
+        msg = { sticker: stickerBuffer2 , mentions : tag}
+
+
+      }  else {
+          msg = {
+             text : msgRepondu.conversation,
+             mentions : tag
+          }
+      }
+
+    zk.sendMessage(dest,msg)
+
+    } else {
+
+        if(!arg || !arg[0]) { repondre('Enter the text to announce or mention the message to announce');
+        ; return} ;
+
+      zk.sendMessage(
+         dest,
+         {
+          text : arg.join(' ') ,
+          mentions : tag
+         }     
+      )
+    }
+
+} else {
+  repondre('Command reserved for administrators.')
+}
+
+});
 
 
 /*******************************  automute && autoummute ***************************/
 
-const cron = require(`../bdd/cron`) ;
+const cron = require(`../data/cron`) ;
 
 
 zokou({
-      nomCom : 'automute',
+    nomCom : 'opentime'
       categorie : 'Group'
   } , async (dest,zk,commandeOptions) => {
 
@@ -803,7 +1026,7 @@ zokou({
   
         let msg = `* *State:* ${state}
         * *Instructions:* To activate automatic mute, add the minute and hour after the command separated by ':'
-        Example automute 9:30
+        Example opentime 9:30
         * To delete the automatic mute, use the command *automute del*`
         
 
@@ -849,8 +1072,8 @@ zokou({
   });
 
 
-  zokou({
-    nomCom : 'autounmute',
+  timoth({
+    nomCom : 'closetime',
     categorie : 'Group'
 } , async (dest,zk,commandeOptions) => {
 
@@ -876,7 +1099,7 @@ zokou({
 
       let msg = `* *State:* ${state}
       * *Instructions:* To activate autounmute, add the minute and hour after the command separated by ':'
-      Example autounmute 7:30
+      Example closetime 7:30
       * To delete autounmute, use the command *autounmute del*`
 
         repondre(msg) ;
@@ -925,17 +1148,17 @@ zokou({
 });
 
 
-
+// COMMAND TO KICK
 zokou({
   nomCom : 'fkick',
   categorie : 'Group'
 } , async (dest,zk,commandeOptions) => {
 
-  const {arg , repondre , verifAdmin , superUser , verifZokouAdmin } = commandeOptions ;
+  const {arg , repondre , verifAdmin , superUser , verifezraAdmin } = commandeOptions ;
 
   if (verifAdmin || superUser) {
 
-    if(!verifZokouAdmin){ repondre('You need administrative rights to perform this command') ; return ;}
+    if(!verifezraAdmin){ repondre('You need administrative rights to perform this command') ; return ;}
 
     if (!arg || arg.length == 0) { repondre('Please enter the country code whose members will be removed') ; return ;}
 
@@ -959,6 +1182,7 @@ zokou({
 }) ;
 
 
+// COMMAND TO NSFW
 zokou({
       nomCom : 'nsfw',
       categorie : 'Group'
@@ -968,7 +1192,7 @@ zokou({
 
   if(!verifAdmin) { repondre('Sorry, you cannot enable NSFW content without being an administrator of the group') ; return}
 
-      let hbd = require('../bdd/hentai') ;
+      let hbd = require('../data/hentai') ;
 
     let isHentaiGroupe = await hbd.checkFromHentaiList(dest) ;
 
