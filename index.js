@@ -113,36 +113,6 @@ setTimeout(() => {
         store.bind(zk.ev);
         // Replace the status reaction code with this:
 
-
-     // List of image URLs
-    const catbox = [
-        "https://files.catbox.moe/iii5jv.jpg",
-        "https://files.catbox.moe/xjeyjh.jpg",
-        "https://files.catbox.moe/mh36c7.jpg",
-        "https://files.catbox.moe/u6v5ir.jpg",
-        "https://files.catbox.moe/bnb3vx.jpg" // New image added
-    ];
-
-    // Select a random image file
-    const randomcutboxurl = catbox[Math.floor(Math.random() * catbox.length)];
-
-        const buttons = [{
-    name: "cta_url",
-    buttonParamsJson: JSON.stringify({
-      display_text: "View on channel",
-      id: `backup channel`,
-      url: "https://whatsapp.com/channel/0029VbAckOZ7tkj92um4KN3u" 
-    })
-  },{
-    name: "cta_copy",
-    buttonParamsJson: JSON.stringify({
-      display_text: "Copy links",
-      id: `copy`,
-      copy_code: `greeting`
-    })
-    }];
-        
-        
         const audioMap = {
     
     "hallo": "audios/hello.m4a",
