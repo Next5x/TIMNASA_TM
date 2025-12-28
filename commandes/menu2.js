@@ -1,39 +1,63 @@
-const util = require('util');
-const fs = require('fs-extra');
 const { zokou } = require(__dirname + "/../framework/zokou");
 const { format, styletext } = require(__dirname + "/../framework/mesfonctions");
-//const {police}=require(__dirname+"/../framework/mesfonctions")
 const os = require("os");
 const moment = require("moment-timezone");
 const s = require(__dirname + "/../set");
-zokou({ nomCom: "menu", categorie: "General" }, async (dest, zk, commandeOptions) => {
+
+zokou({ nomCom: "wote", categorie: "General", reaction: "📂" }, async (dest, zk, commandeOptions) => {
     let { ms, repondre } = commandeOptions;
-    let { cm } = require(__dirname + "/../framework//zokou");
+    let { cm } = require(__dirname + "/../framework/zokou");
+    
     var coms = {};
-    var mode = "public";
-    if ((s.MODE).toLocaleLowerCase() != "oui") {
-        mode = "privé";
+    var mode = (s.MODE).toLocaleLowerCase() === "oui" || (s.MODE).toLocaleLowerCase() === "yes" ? "Public" : "Privé";
+
+    // Panga komandi
+    cm.map((com) => {
+        if (!coms[com.categorie]) coms[com.categorie] = [];
+        coms[com.categorie].push(com.nomCom);
+    });
+
+    const timeZone = "Asia/Karachi";
+    const temps = moment().tz(timeZone).format("HH:mm:ss");
+    const date = moment().tz(timeZone).format("DD/MM/YYYY");
+
+    // Muundo wa Menu
+    let menuMsg = `✨ ${styletext("Ƶ𝓞ｋØ𝓊-𝓜𝓓", "bold")} ✨\n\n`;
+    
+    menuMsg += `╭━━━〔  ${styletext("SYSTEM INFO", "bold")}  〕━━━┈⊷
+┃ 👤 ${styletext("Owner", "bold")} : ${s.OWNER_NAME}
+┃ ⚙️ ${styletext("Mode", "bold")} : ${mode}
+┃ 📊 ${styletext("Commands", "bold")} : ${cm.length}
+┃ 🕒 ${styletext("Time", "bold")} : ${temps}
+┃ 🗓️ ${styletext("Date", "bold")} : ${date}
+┃ 💾 ${styletext("Ram", "bold")} : ${format(os.totalmem() - os.freemem())}/${format(os.totalmem())}
+╰━━━━━━━━━━━━━━━┈⊷\n\n`;
+
+    // Kuweka makundi ya komandi
+    for (const cat in coms) {
+        menuMsg += `📂 *${cat.toUpperCase()}*\n`;
+        // Hapa tunaziweka komandi kwa mstari mmoja ili menu isiwe ndefu sana
+        menuMsg += `   ${coms[cat].map(cmd => `• ${styletext(cmd, "mono")}`).join("\n   ")}\n\n`;
     }
-    var emoji = { "General": "🌐", "Logo": "🎨", "Hentai": "🔥", "Weeb": "🌸", "Recherche": "🔍", "Conversion": "🌟", "Groupe": "♻️", "Autre": "🪖" };
-    cm.map(async (com, index) => { if (!coms[com.categorie])
-        coms[com.categorie] = []; coms[com.categorie].push(com.nomCom); });
-    const temps = moment(moment()).format("HH:MM:SS");
-    moment.tz.setDefault('asia/karachi ').locale("id");
-    const date = moment.tz("asia/karachi").format("DD/MM/YYYY");
-    console.log("date" + date);
-    console.log("temps " + temps);
-    let menuMsg = "  ╩═══ * Ƶ𝓞ｋØ𝓊 * ╩═══\n\n";
-    /*menuMsg+=`
+
+    menuMsg += `\n📢 ${styletext("JIUNGE NA CHANNEL YETU", "bold")}\n`;
+    menuMsg += `https://whatsapp.com/channel/0029VaaqaSp79PwS6p8dn71w\n\n`; // Weka link ya channel yako hapa
     
-    
-    
-    Owner : ${s.OWNER_NAME} \n       || Commandes : ${cm.length} \n        || Date : ${date}\n || Heure : ${temps} \n || Mémoire : ${format(os.totalmem()-os.freemem())}/${format(os.totalmem())}\n || Plateforme : ${os.platform()}\n || Developpeur : Djalega++ \n\n ╰────────────────`;
-    
-    
-    
-    
-      
-    ╚═════ ▓▓ ࿇ ▓▓ ═════╝*/
+    menuMsg += `> ${styletext("Powered by Djalega++", "italic")}`;
+
+    var link = s.IMAGE_MENU || "https://wallpapercave.com/uwp/uwp3860299.jpeg";
+
+    try {
+        await zk.sendMessage(dest, { 
+            image: { url: link }, 
+            caption: menuMsg,
+            footer: "Bonyeza link hapo juu kujiunga" 
+        }, { quoted: ms });
+    } catch (e) {
+        console.log("🥵🥵 Menu erreur " + e);
+        repondre("🥵🥵 Menu erreur " + e);
+    }
+});
     /* menuMsg+=`
    ╔════ ▓▓ ࿇ ▓▓ ════╗
    

@@ -1,31 +1,9 @@
 const { zokou } = require("../framework/zokou");
-const axios = require('axios');
 const conf = require(__dirname + '/../set');
 const moment = require("moment-timezone");
-const { generateWAMessageContent, generateWAMessageFromContent } = require('@whiskeysockets/baileys');
+const os = require("os");
 
-
-// ── Random image for the header ─────────────────────────────────
-const njabulox = [
-  "",
-  "https://files.catbox.moe/mhhku3.jpeg",
-  "https://files.catbox.moe/t5v7hj.jpg",
-  "https://files.catbox.moe/x0zjpf.jpg",
-  "https://files.catbox.moe/bnb3vx.jpg"
-];
-const randomNjabulourl = njabulox[Math.floor(Math.random() * njabulox.length)];
-
-// ── Helper: simple delay (debug) ─────────────────────────────────
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-// ── Helper: get a friendly name ─────────────────────────────────
-function getName(dest, opts) {
-  return opts.pushName || opts.name || dest.sender?.split("@")[0] || "Unknown";
-}
-
-// ── Helper: format seconds into “X d, Y h, Z m, S s” ─────────────────
+// Helper: format seconds into “X d, Y h, Z m, S s”
 function formatDuration(sec) {
   sec = Number(sec);
   const days = Math.floor(sec / 86400);
@@ -35,116 +13,66 @@ function formatDuration(sec) {
   const mins = Math.floor(sec / 60);
   const secs = Math.floor(sec % 60);
   const parts = [];
-  if (days) parts.push(`${days} d`);
-  if (hrs) parts.push(`${hrs} h`);
-  if (mins) parts.push(`${mins} m`);
-  if (secs) parts.push(`${secs} s`);
+  if (days) parts.push(`${days}d`);
+  if (hrs) parts.push(`${hrs}h`);
+  if (mins) parts.push(`${mins}m`);
+  if (secs) parts.push(`${secs}s`);
   return parts.join(", ");
 }
 
-// ── Main ping command ───────────────────────────────────────────
 zokou(
   {
-    nomCom: "pin",
-    desc: "Check bot response time",
-    Categorie: "General",
-    reaction: "🏓",
-    fromMe: true,
+    nomCom: "pingx",
+    desc: "Angalia kasi ya bot",
+    categorie: "General",
+    reaction: "⚡",
   },
   async (dest, zk, opts) => {
+    const { ms } = opts;
+    
+    // Anza kuhesabu muda
+    const start = Date.now();
+    
+    // Muda wa Afrika/Nairobi au Dar es Salaam
+    const time = moment().tz("Africa/Nairobi").format("HH:mm:ss");
+    const date = moment().tz("Africa/Nairobi").format("DD/MM/YYYY");
+    
+    // Malizia kuhesabu (Real Latency)
+    const end = Date.now();
+    const ping = end - start;
+
+    const uptime = formatDuration(process.uptime());
+
+    const pingMsg = `*Ƶ𝓞ｋØ𝓊-𝓜𝓓 ᴘɪɴɢ* ⚡
+
+📡 *Kasi:* ${ping} ms
+⏱️ *Muda:* ${time}
+📅 *Tarehe:* ${date}
+⏳ *Uptime:* ${uptime}
+🟢 *Hali:* Ni mzima (Alive)
+🌍 *Nchi:* Tanzania
+
+📢 *Channel:* https://whatsapp.com/channel/0029VaaqaSp79PwS6p8dn71w
+
+> *Powered by Djalega++*`;
+
     try {
-      console.log("Ping command triggered!");
-      const name = getName(dest, opts);
-      // Botswana time
-      moment.tz.setDefault("Africa/Botswana");
-      const now = moment();
-      const time = now.format("HH:mm:ss"); // 24‑hour format
-      const date = now.format("YYYY‑MM‑DD"); // exactly YYYY‑MM‑DD
-      const day = now.format("dddd"); // Monday, Tuesday, …
-      // Random ping between 100 ms and 2 s
-      const ping = Math.floor(Math.random() * 1900 + 100);
-      const uptime = formatDuration(process.uptime());
+      // Picha ya random kutoka kwenye list yako
+      const njabulox = [
+        "https://files.catbox.moe/mhhku3.jpeg",
+        "https://files.catbox.moe/t5v7hj.jpg",
+        "https://files.catbox.moe/x0zjpf.jpg",
+        "https://files.catbox.moe/bnb3vx.jpg"
+      ];
+      const randomImg = njabulox[Math.floor(Math.random() * njabulox.length)];
 
-      const infoMsg = `
-📅 Date : ${date}
-📆 Day : ${day}
-⏰ Time : ${time}
-⌚ Pong : ${ping} ms
-🟢 Alive : Yes
-🌍 Country : Tanzania 
-⏳ Uptime : ${uptime}
-`.trim();
+      await zk.sendMessage(dest, { 
+        image: { url: randomImg }, 
+        caption: pingMsg 
+      }, { quoted: ms });
 
-      console.log("Info message generated:", infoMsg);
-
-      const cards = await Promise.all(
-        Array(5).fill().map(async (_, i) => ({
-          header: {
-            title: `📊 Server Stats`,
-            hasMediaAttachment: true,
-            imageMessage: (await generateWAMessageContent({ image: { url: randomNjabulourl } }, { upload: zk.waUploadToServer })).imageMessage,
-          },
-          body: {
-            text: infoMsg,
-          },
-          footer: {
-            text: "ᯤAll is for you enjoy🎈",
-          },
-          nativeFlowMessage: {
-            buttons: [
-              {
-                name: "cta_copy",
-                buttonParamsJson: JSON.stringify({
-                  display_text: "📋 Copy Stats",
-                  copy_code: infoMsg,
-                }),
-              },
-              {
-                name: "cta_url",
-                buttonParamsJson: JSON.stringify({
-                  display_text: "🌐 Visit Channel",
-                  url: "https://example.com",
-                }),
-              },
-            ],
-          },
-        }))
-      );
-
-      console.log("Cards generated:", cards);
-
-      const message = generateWAMessageFromContent(
-        dest,
-        {
-          viewOnceMessage: {
-            message: {
-              messageContextInfo: {
-                deviceListMetadata: {},
-                deviceListMetadataVersion: 2,
-              },
-              interactiveMessage: {
-                body: {
-                  text: `*ᴛɪᴍɴᴀsᴀ ᴘɪɴɢ sᴘᴇᴇᴅ⁹⁸٪. 98%*\n📊 Server Stats`,
-                },
-                footer: {
-                  text: `📂 Showing ping and uptime info`,
-                },
-                carouselMessage: {
-                  cards,
-                },
-              },
-            },
-          },
-        },
-        { quoted: opts }
-      );
-
-      console.log("Message generated:", message);
-
-      await zk.relayMessage(dest, message.message, { messageId: message.key.id });
-      console.log("Ping results sent successfully!");
     } catch (error) {
-      console.error("Error sending ping message:", error);
+      console.log("Ping Error: " + error);
     }
   }
 );
