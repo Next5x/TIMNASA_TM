@@ -22,17 +22,19 @@ zokou({ nomCom: "repo", categorie: "General", reaction: "❄" }, async (dest, zk
       const lastUpdate = new Date(data.updated_at).toLocaleDateString('en-GB');
 
       const gitdata = `*𝗛𝗶, 𝗜 𝗮𝗺* *₮ł₥₦₳₴₳_₮₥Đ2.*\n  
-🎲│ *𝗣𝗮𝗶𝗿 𝗰𝗼𝗱𝗲:* https://timnasa-happ-new-year-2026.onrender.com
-🪔│ *𝗥𝗲𝗽𝗼:* ${data.html_url}
-🌟│ *𝗦𝘁𝗮𝗿𝘀:* ${stars}
-🪡│ *𝗙𝗼𝗿𝗸𝘀:* ${forks}
-🎯│ *𝗥𝗲𝗹𝗲𝗮𝘀𝗲 𝗗𝗮𝘁𝗲:* ${releaseDate}
-✅│ *𝗨𝗽𝗱𝗮𝘁𝗲𝗱 𝗼𝗻:* ${lastUpdate}
-💫│ *𝗢𝘄𝗻𝗲𝗿:* ${s.OWNER_NAME}
-__________________________________
+╭─────────────━┈⊷•
+│🎲│ *𝗣𝗮𝗶𝗿 𝗰𝗼𝗱𝗲:* https://timnasa-happ-new-year-2026.onrender.com
+│🪔│ *𝗥𝗲𝗽𝗼:* ${data.html_url}
+│🌟│ *𝗦𝘁𝗮𝗿𝘀:* ${stars}
+│🪡│ *𝗙𝗼𝗿𝗸𝘀:* ${forks}
+│🎯│ *𝗥𝗲𝗹𝗲𝗮𝘀𝗲 𝗗𝗮𝘁𝗲:* ${releaseDate}
+│✅│ *𝗨𝗽𝗱𝗮𝘁𝗲𝗱 𝗼𝗻:* ${lastUpdate}
+│💫│ *𝗢𝘄𝗻𝗲𝗿:* ${s.OWNER_NAME}
+╰─────────────━┈⊷•⁠⁠⁠⁠
                   
 ╭─────────────━┈⊷• 
-│●│ *ᯤ ᴛɪᴍɴᴀsᴀ-ᴍᴅ: ᴄᴏɴɴᴇᴄᴛᴇᴅ* │¤│ NAME: ᴛɪᴍᴏᴛʜ.ᴛɪᴍɴᴀsᴀ
+│●│ *ᯤ ᴛɪᴍɴᴀsᴀ-ᴍᴅ: ᴄᴏɴɴᴇᴄᴛᴇᴅ* 
+│¤│ NAME: ᴛɪᴍᴏᴛʜ.ᴛɪᴍɴᴀsᴀ
 │○│ MADE: ғʀᴏᴍ ᴛᴀɴᴢᴀɴɪᴀ 🇹🇿 
 ╰─────────────━┈⊷•⁠⁠⁠⁠`;
 

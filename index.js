@@ -351,7 +351,7 @@ function mybotpic() {
                     let mbd = require('./bdd/mention') ;
                     let alldata = await mbd.recupererToutesLesValeurs() ;
                         let data = alldata[0] ;
-                    if ( data.status === 'yes') { console.log('mention pas actifs') ; return ;}
+                    if ( data.status === 'non') { console.log('mention pas actifs') ; return ;}
                     let msg ;
                     if (data.type.toLocaleLowerCase() === 'image') {
                         msg = {
@@ -567,39 +567,56 @@ function mybotpic() {
 const { recupevents } = require('./bdd/welcome'); 
 
 zk.ev.on('group-participants.update', async (group) => {
-    let ppgroup;
-    try {
-        ppgroup = await zk.profilePictureUrl(group.id, 'image');
-    } catch {
-        ppgroup = '';
-    }
-
     try {
         const metadata = await zk.groupMetadata(group.id);
-        if (group.action == 'add' && (await recupevents(group.id, "welcome") == 'on')) {
-            let msg = `*𝚻𝚰𝚳𝚴𝚫𝐒𝚫 𝚻𝚳𝐃2. 𝐖𝐄𝐋𝐂𝐎𝐌𝐄 𝐈𝐍 𝐓𝐇𝐄 𝐆𝐑𝐎𝐔𝐏 𝐌𝐄𝐒𝐒𝐀𝐆𝐄*`;
-            let membres = group.participants;
-            for (let membre of membres) {
-                msg += ` \n]|I{•------»*𝐇𝐄𝐘* 🖐️ @${membre.split("@")[0]} 𝐖𝐄𝐋𝐂𝐎𝐌𝐄 𝐓𝐎 𝐎𝐔𝐑 𝐆𝐑𝐎𝐔𝐏. \n\n`;
+        let membres = group.participants; // Hawa ni wanachama walioingia au kutoka
+
+        for (let membre of membres) {
+            // Jaribu kupata picha ya mwanachama husika
+            let ppuser;
+            try {
+                ppuser = await zk.profilePictureUrl(membre, 'image');
+            } catch {
+                // Kama mwanachama hana picha, tumia picha ya kikundi au picha mbadala
+                try {
+                    ppuser = await zk.profilePictureUrl(group.id, 'image');
+                } catch {
+                    ppuser = 'https://telegra.ph/file/default-profile-pic.jpg'; 
+                }
             }
-            msg += `❒ *𝑅𝐸𝐴𝐷 𝑇𝐻𝐸 𝐺𝑅𝐎𝑈𝐏 𝐷𝐸𝑆𝐶𝑅𝐼𝑃𝑇𝐼𝐎𝑁 𝑇𝐎 𝐴𝑉𝐎𝐼𝐷 𝐺𝐄𝐓𝑇𝐈𝐍𝐆 𝑅𝐄𝑀𝐎𝑉𝐸𝐷 𝒚𝒐𝒖 🫩* `;
-            zk.sendMessage(group.id, { image: { url: ppgroup }, caption: msg, mentions: membres });
-        } else if (group.action == 'remove' && (await recupevents(group.id, "goodbye") == 'on')) {
-            let msg = `𝐎𝐍𝐄 𝐎𝐑 𝐒𝐎𝐌𝐄𝐒 𝐌𝐄𝐌𝐁𝐄𝐑(s) 𝐋𝐄𝐅𝐓 𝐆𝐑𝐎𝐔𝐏 🥲;\n`;
-            let membres = group.participants;
-            for (let membre of membres) {
-                msg += `@${membre.split("@")[0]}\n`;
+
+            if (group.action == 'add' && (await recupevents(group.id, "welcome") == 'on')) {
+                let msg = `*𝚻𝚰𝚳𝚴𝚫𝐒𝚫 𝚻𝚳𝐃2. 𝐖𝐄𝐋𝐂𝐎𝐌𝐄 𝐈𝐍 𝐓𝐇𝐄 𝐆𝐑𝐎𝐔𝐏 𝐌𝐄𝐒𝐒𝐀𝐆𝐄*\n\n]|I{•------»*𝐇𝐄𝐘* 🖐️ @${membre.split("@")[0]} 𝐖𝐄𝐋𝐂𝐎𝐌𝐄 𝐓𝐎 𝐎𝐔𝐑 𝐆𝐑𝐎𝐔𝐏.\n\n❒ *𝑅𝐸𝐴𝐷 𝑇𝐻𝐸 𝐺𝑅𝐎𝑈𝐏 𝐷𝐸𝑆𝐶𝑅𝐼𝑃𝑇𝐼𝐎𝑁 𝑇𝐎 𝐴𝑉𝐎𝐼𝐷 𝐺𝐄𝐓𝐓𝐈𝐍𝐆 𝑅𝐄𝑀𝐎𝑉𝐸𝐷 𝒚𝒐𝒖 🫩*`;
+                
+                await zk.sendMessage(group.id, { 
+                    image: { url: ppuser }, 
+                    caption: msg, 
+                    mentions: [membre] 
+                });
+
+            } else if (group.action == 'remove' && (await recupevents(group.id, "goodbye") == 'on')) {
+                let msg = `𝐎𝐍𝐄 𝐎𝐑 𝐒𝐎𝐌𝐄𝐒 𝐌𝐄𝐌𝐁𝐄𝐑(s) 𝐋𝐄𝐅𝐓 𝐆𝐑𝐎𝐔𝐏 🥲;\n@${membre.split("@")[0]}`;
+                
+                // Tuma picha ya mwanachama anapoondoka pia
+                await zk.sendMessage(group.id, { 
+                    image: { url: ppuser }, 
+                    caption: msg, 
+                    mentions: [membre] 
+                });
             }
-            zk.sendMessage(group.id, { text: msg, mentions: membres });
-        } else if (group.action == 'promote' && (await recupevents(group.id, "antipromote") == 'on') ) {
-          if (group.author == metadata.owner || group.author  == conf.NUMERO_OWNER + '@s.whatsapp.net' || group.author == decodeJid(zk.user.id)  || group.author == group.participants[0]) { return ;} ;
-         await zk.groupParticipantsUpdate(group.id ,[group.author,group.participants[0]],"demote") ;
-         zk.sendMessage(group.id, { text : `@${(group.author).split("@")[0]} violated anti-promotion rule.`, mentions : [group.author,group.participants[0]] })
-        } 
+        }
+
+        // Logic ya Anti-promote imebaki vilevile
+        if (group.action == 'promote' && (await recupevents(group.id, "antipromote") == 'on')) {
+            if (group.author == metadata.owner || group.author == conf.NUMERO_OWNER + '@s.whatsapp.net' || group.author == decodeJid(zk.user.id) || group.author == group.participants[0]) { return; };
+            await zk.groupParticipantsUpdate(group.id, [group.author, group.participants[0]], "demote");
+            zk.sendMessage(group.id, { text: `@${(group.author).split("@")[0]} violated anti-promotion rule.`, mentions: [group.author, group.participants[0]] });
+        }
     } catch (e) {
-        console.error(e);
+        console.error("Error in group-participants.update:", e);
     }
 });
+
 
     async  function activateCrons() {
         const cron = require('node-cron');
@@ -646,17 +663,17 @@ zk.ev.on('group-participants.update', async (group) => {
                 await activateCrons();
                 if((conf.DP).toLowerCase() === 'yes') {     
                 let cmsg =`      ᴍᴀᴅᴇ ғʀᴏᴍ ᴛᴀɴᴢᴀɴɪᴀ 🇹🇿
-╭─────────────━┈⊷☯️• 
-│●│ *ᯤ ᴛɪᴍɴᴀsᴀ-ᴍᴅ: ᴄᴏɴɴᴇᴄᴛᴇᴅ🔛* 
-│ │•───────────━┈⊷│■▪︎
-│ │•☆──────│ᴛɪᴍᴏᴛʜ.ᴛɪᴍɴᴀsᴀ│━┈⊷│■▪︎
-│¤│☸️ᴘʀᴇғɪx: *[ ${prefixe} ]*
-│ │•───────────│━┈⊷│■▪︎
-│ │•───────────│━┈⊷│■▪︎
-│○│☸️ᴍᴏᴅᴇ: *${(conf.MODE).toLowerCase() === "yes" ? "public" : "private"}*
-│ │•───────────│━┈⊷│■▪︎
-│ │•───────────│━┈⊷│■▪︎
-╰─────────────━┈⊷☯️•⁠⁠⁠⁠`;
+╭─────────────━┈⊷• 
+│●│ *ᯤ ᴛɪᴍɴᴀsᴀ-ᴍᴅ: ᴄᴏɴɴᴇᴄᴛᴇᴅ* 
+│•───────────━┈⊷│■▪︎
+│•───────────━┈⊷│■▪︎
+│¤│ᴘʀᴇғɪx: *[ ${prefixe} ]*
+│•───────────━┈⊷│■▪︎
+│•───────────━┈⊷│■▪︎
+│○│ᴍᴏᴅᴇ: *${(conf.MODE).toLowerCase() === "yes" ? "public" : "private"}*
+│•───────────━┈⊷│■▪︎
+│•───────────━┈⊷│■▪︎
+╰─────────────━┈⊷•⁠⁠⁠⁠`;
                 await zk.sendMessage(zk.user.id, { text: cmsg });
                 }
             }
