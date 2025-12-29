@@ -1,27 +1,21 @@
-# Tunatumia toleo thabiti la Node.js
-FROM node:lts-buster
+FROM node:lts
 
-# Sakinisha vifurushi vya mfumo vinavyohitajika na Zokou (ffmpeg, imagemagick, nk.)
 RUN apt-get update && \
   apt-get install -y \
   ffmpeg \
   imagemagick \
-  webp \
-  git \
-  && apt-get upgrade -y && \
+  webp && \
+  apt-get upgrade -y && \
+  npm i pm2 -g && \
   rm -rf /var/lib/apt/lists/*
 
-# Tengeneza folder la kazi ndani ya container
-WORKDIR /root/zokou
+WORKDIR /app
 
-# Nakili package.json kwanza ili kuharakisha ufungaji wa 'dependencies'
 COPY package.json .
+RUN npm install --legacy-peer-deps
 
-# Sakinisha maktaba za Node.js
-RUN npm install
-
-# Nakili mafaili yote ya bot yako kuingia ndani ya container
 COPY . .
 
-# Amri ya kuwasha bot
+EXPOSE 5000
+
 CMD ["node", "index.js"]
