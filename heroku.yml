@@ -1,5 +1,8 @@
+setup:
+  addons:
+    - plan: heroku-postgresql:essential-0
 build:
   docker:
-      worker: Dockerfile
+    worker: Dockerfile
 run:
-   worker:   npm run toshtech
+  worker: node index.js
